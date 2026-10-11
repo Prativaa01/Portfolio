@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #fffaf4;
+  --color-sand: #d8d0bd;
+  --color-ink: #0e0e0a;
+  --color-canvas: #d8d0bd;
+  --color-slot: #d9d9d9;
+  --color-rule: #878787;
+}
+
+html {
+  background-color: var(--color-canvas);
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-display), "Times New Roman", Times, serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Figma text nodes are authored at weight 200; the closest available
+   variable weight on the fallback serif is 300. */
+.font-thin-figma {
+  font-weight: 300;
+}
+
+.font-ruda {
+  font-family: var(--font-ruda), sans-serif;
+}
+
+/* Rotated -90deg text: renders bottom-to-top like the Figma frame. */
+.vertical-rl-upright {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.photo-slot {
+  background-color: var(--color-slot);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(17, 18, 13, 0.05) 0 1px,
+    transparent 1px 12px
+  );
+}
+
+@keyframes marquee-forward {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-reverse {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-slot {
+    background-image: none;
+  }
+}

@@ -1,0 +1,69 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { PanelOne } from "./PanelOne";
+import { PanelTwo } from "./PanelTwo";
+import { PanelThree } from "./PanelThree";
+import { ExpertisePanel } from "./ExpertisePanel";
+import { DESIGN } from "@/lib/content";
+
+export function HorizontalPortfolio() {
+  const [scale, setScale] = useState(1);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const update = () =>
+      setScale(Math.min(1, window.innerHeight / DESIGN.frameHeight));
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const onWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      event.preventDefault();
+      const delta =
+        event.deltaMode === 1
+          ? event.deltaY * 16
+          : event.deltaMode === 2
+            ? event.deltaY * window.innerHeight
+            : event.deltaY;
+      el.scrollLeft += delta;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
+  return (
+    <div
+      ref={scrollerRef}
+      className="flex h-screen w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    >
+      <div
+        style={{
+          width: DESIGN.frameWidth * scale,
+          height: DESIGN.frameHeight * scale,
+        }}
+        className="relative shrink-0"
+      >
+        <div
+          style={{
+            width: DESIGN.frameWidth,
+            height: DESIGN.frameHeight,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+          }}
+          className="flex absolute left-0 top-0"
+        >
+          <PanelOne />
+          <PanelTwo />
+          <PanelThree />
+          <ExpertisePanel />
+        </div>
+      </div>
+    </div>
+  );
+}
