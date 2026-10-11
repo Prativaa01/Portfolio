@@ -24,7 +24,9 @@ export function PanelTwo() {
         </div>
       </div>
 
-      <div className="absolute left-[1040px] top-[100px] flex h-[84px] w-[1660px] items-start gap-[790px] bg-black/90 px-[84px]">
+      {/* No background: the Figma frame has zero fills here - the text sits
+          directly on the panel's own dark fill. */}
+      <div className="absolute left-[1040px] top-[100px] flex h-[84px] w-[1660px] items-start gap-[790px] px-[84px]">
         <span className="shrink-0 text-[24px] leading-[28.4px] font-thin-figma">
           {COPY.philosophyLabel}
         </span>

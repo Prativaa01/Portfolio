@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { PanelOne } from "./PanelOne";
 import { PanelTwo } from "./PanelTwo";
 import { PanelThree } from "./PanelThree";
-import { ExpertisePanel } from "./ExpertisePanel";
 import { DESIGN } from "@/lib/content";
 
 export function HorizontalPortfolio() {
@@ -61,7 +60,6 @@ export function HorizontalPortfolio() {
           <PanelOne />
           <PanelTwo />
           <PanelThree />
-          <ExpertisePanel />
         </div>
       </div>
     </div>
