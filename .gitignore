@@ -42,3 +42,6 @@ next-env.d.ts
 
 # figma API exports (token-derived data, not for commit)
 design/
+
+# MCP / OAuth credentials — never commit
+mcp-auth.json

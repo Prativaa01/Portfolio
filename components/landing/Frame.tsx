@@ -98,6 +98,7 @@ export function Frame({ children }: { children: ReactNode }) {
     <FrameContext.Provider value={{ scale, heroFill }}>
       <div
         ref={scrollerRef}
+        data-frame-scroller
         className="flex h-screen w-full items-center overflow-x-auto overflow-y-hidden bg-ink [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <div
@@ -112,7 +113,10 @@ export function Frame({ children }: { children: ReactNode }) {
             style={{
               width: totalWidth,
               height: HOME.frameHeight,
-              transform: `scale(${scale})`,
+              // An identity transform still promotes this subtree to its own
+              // compositing layer, which can make descendant text rasterise
+              // twice at a sub-pixel offset. Skip it when we are already 1:1.
+              transform: scale === 1 ? undefined : `scale(${scale})`,
               transformOrigin: "top left",
             }}
           >

@@ -76,6 +76,15 @@ export const HOME = {
     cardTops: [0, -9, -13, -16],
     borderLefts: [637, 1076, 1515, 1954, 2393.5],
     borderThickness: 1,
+    /**
+     * Each expertise PNG is a full-card hover mockup with "0n", the title and
+     * the description baked in at one FIXED position (image y 36.8 / 374.5 /
+     * 576.1 once mapped through the cover fit). The live copy, however, is
+     * staggered per card by cardTops. These shifts (live - baked, averaged
+     * across number/title/body) re-align the baked text with the resting text
+     * so the words do not jump when the picture appears.
+     */
+    hoverTextShift: [9, -1.1, -4.8, -7.8],
     numberFontSize: 70,
     numberScaleX: 0.87,
     numberOffset: 54,
@@ -162,15 +171,76 @@ export const PROJECTS = [
   { name: "WORLDLINK", img: "/images/projects/09-worldlink.png" },
 ] as const;
 
+/**
+ * Marquee geometry, measured from `Reference photos/motion reference.mp4`:
+ * a fixed, centred window (25% of the panel width) that clips two rows of
+ * landscape tiles drifting in opposite directions, sitting behind the heading.
+ * Values below are design px within the 1566x770 work panel.
+ */
 export const MARQUEE = {
-  tileWidth: 248,
-  /** Tile height follows the 462x422 source ratio. */
-  tileHeight: 226,
-  tileGap: 18,
-  durationSeconds: 42,
-  /** Two rows drifting against each other, both behind the heading. */
+  windowLeft: 588,
+  windowTop: 295,
+  windowWidth: 390,
+  windowHeight: 180,
+  tileWidth: 120,
+  /** Source tiles are landscape, ~1.7:1. */
+  tileHeight: 70,
+  tileGap: 12,
+  durationSeconds: 26,
+  /**
+   * Rows also drift vertically, out of phase with each other, so the cluster
+   * reads as moving on both axes. Amplitude matches the ~12-19px vertical
+   * swing measured across frames in the reference clip.
+   */
+  driftAmplitude: 14,
+  driftSeconds: 9,
   rows: [
-    { top: 300, reverse: false },
-    { top: 356, reverse: true },
+    { top: 0, reverse: false },
+    { top: 100, reverse: true },
   ],
+} as const;
+
+/**
+ * Cinematic expand for the work panel, adapted from khanhnguyen.design's
+ * "More Work" reveal: a rect that scales up to cover the panel while the two
+ * words of the heading fly apart in opposite directions.
+ *
+ * The marquee window is already dead-centre in the panel, so scaling it from
+ * its own centre is all that is needed to fill the frame — no repositioning.
+ * Values below are design px within the 1566x770 work panel.
+ */
+export const WORK_REVEAL = {
+  /**
+   * How far the panel must travel (design px, either side of centre) before
+   * the reveal starts. Larger values make the expansion feel more deliberate.
+   */
+  travel: 1000,
+  /**
+   * How far "THE" and "WORK" travel apart, in design px.
+   *
+   * Measured from the rendered heading: "THE" spans 308 -> 663 and "WORK"
+   * spans 709 -> 1261 inside the 1566 panel, so 282 lands each word flush
+   * against its edge with a small margin instead of clipping it off-screen.
+   */
+  splitX: 282,
+  /**
+   * Ink wash that fades in over the imagery as the panel fills.
+   *
+   * The heading flips to cream, but cream over a light screenshot is still
+   * weak. A light scrim over the whole panel both unifies the collage and
+   * gives the cream type something to sit on.
+   */
+  scrimOpacity: 0.34,
+  /**
+   * Scale the marquee window must reach to cover the panel. Uniform, so the
+   * 390x180 window has to scale by the *larger* of the two ratios (770/180)
+   * — scaling by the width ratio would leave a horizontal band uncovered.
+   */
+  coverScale: 770 / 180,
+  /**
+   * Progress window over which the heading flips from ink to cream. The rect
+   * underneath is dark imagery, so the heading has to change contrast with it.
+   */
+  flipFrom: 0.12,
+  flipTo: 0.6,
 } as const;

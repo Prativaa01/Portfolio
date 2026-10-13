@@ -48,7 +48,7 @@ export function ExpertiseGrid() {
       {EXPERTISE.map((item, i) => (
         <div
           key={item.num}
-          className="group absolute"
+          className="group absolute isolate"
           style={{
             left: e.borderLefts[i],
             top: 0,
@@ -58,11 +58,17 @@ export function ExpertiseGrid() {
           onMouseEnter={() => setHovered(i)}
           onMouseLeave={() => setHovered((cur) => (cur === i ? null : cur))}
         >
-          {/* Text layer dims to 0.7 on hover, per Variant2 in Figma. */}
+          {/* Copy layer is pinned above the image and never animates.
+
+              It deliberately carries no opacity transition: an opacity
+              value other than 1 promotes this layer to its own compositing
+              layer, and the text then renders twice with a few-pixel offset
+              (lines visibly ghosting over each other on hover). Only the
+              image fades; this stays fully opaque and pinned. */}
           <div
-            className="absolute inset-0 transition-opacity duration-300 ease-out"
-            style={{ opacity: hovered === i ? 0.7 : 1 }}
-          >
+          className="absolute inset-0 z-10 transition-opacity duration-300 ease-out"
+          style={{ opacity: hovered === i ? 0 : 1 }}
+        >
             <div
               className="absolute whitespace-nowrap"
               style={{
@@ -108,31 +114,29 @@ export function ExpertiseGrid() {
           </p>
           </div>
 
-          {/* Hover state, mirroring the Figma component variant swap
-              (ON_HOVER -> CHANGE_TO "Property 1=Variant2", SMART_ANIMATE,
-              EASE_OUT, 300ms).
-
-              Variant2 is layered, not a swap: a partial-width image sits at
-              top 207px / 408x430, and the whole text card dims to 0.7
-              underneath it. The copy therefore stays visible on hover. */}
-          <div
-            className="pointer-events-none absolute transition-opacity duration-300 ease-out"
+          {/* Hover state: only the picture changes. It runs the card's full
+              length (0,0 -> cardWidth x frameHeight) and sits beneath the copy
+              layer, so the number, title and description never shift or move —
+              they simply stay put on top of the incoming image. */}
+<div
+            className="pointer-events-none absolute -z-10"
             style={{
-              left: 16,
-              top: 207,
-              width: 408.2,
-              height: 430.2,
+              left: 0,
+              top: 0,
+              width: e.cardWidth,
+              height: HOME.frameHeight,
               opacity: hovered === i ? 1 : 0,
+              backgroundImage: `url(${item.img})`,
+              backgroundSize: "cover",
+              // The asset is a complete hover-state mockup: "0n", the title
+              // and the description are all baked into the PNG. Its copy sits
+              // at one fixed spot, while the live copy is staggered per card,
+              // so shift each picture to put the two back in register.
+              backgroundPosition: `center calc(50% + ${e.hoverTextShift[i]}px)`,
             }}
-          >
-            <Image
-              src={item.img}
-              alt={item.title}
-              width={880}
-              height={1604}
-              className="h-full w-full object-cover"
-            />
-          </div>
+            role="img"
+            aria-label={item.title}
+          />
         </div>
       ))}
     </section>
