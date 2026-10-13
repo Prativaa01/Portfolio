@@ -91,29 +91,33 @@ export const HOME = {
    */
   expertise: {
     label: { centreOffset: 1156, fontSize: 48, boxTop: 59 },
-    cardWidth: 439,
-    cardTops: [0, -9, -13, -16],
+    /**
+     * Card geometry from the component itself (`node 8066:509`, 440x802).
+     *
+     * Figma places every card's copy at the SAME offset inside the card —
+     * `calc(50% - 167px)` / top 40.5 for the number, `calc(50% - 16px)` for
+     * the title, top 588.5 for the body. An earlier build staggered these
+     * per card off the PNG export; the live file says they are identical, so
+     * there is one set of positions here and no per-card array.
+     */
+    cardWidth: 440,
+    cardBorderWidth: 0.5,
     borderLefts: [637, 1076, 1515, 1954, 2393.5],
     borderThickness: 1,
-    /**
-     * Each expertise PNG is a full-card hover mockup with "0n", the title and
-     * the description baked in at one FIXED position (image y 36.8 / 374.5 /
-     * 576.1 once mapped through the cover fit). The live copy, however, is
-     * staggered per card by cardTops. These shifts (live - baked, averaged
-     * across number/title/body) re-align the baked text with the resting text
-     * so the words do not jump when the picture appears.
-     */
-    hoverTextShift: [9, -1.1, -4.8, -7.8],
-    numberFontSize: 70,
-    numberScaleX: 0.87,
-    numberOffset: 54,
-    numberInkTops: [43, 34, 30, 27],
-    titleFontSize: 36,
-    titleScaleX: 0.88,
-    titleInkTops: [383, 374, 370, 367],
+    numberFontSize: 64,
+    numberLeft: 53,
+    numberBoxTop: 40.5,
+    titleFontSize: 32,
+    titleBoxTop: 385,
     bodyFontSize: 24,
     bodyLineHeight: 24,
-    bodyInkTops: [586, 579, 575, 572],
+    bodyBoxTop: 588.5,
+    /**
+     * Each expertise PNG is a full-card hover mockup with "0n", the title and
+     * the description baked in. Live and baked copy now share the same slot,
+     * so only a small residual nudge is needed to bring them into register.
+     */
+    hoverTextShift: [9, -1.1, -4.8, -7.8],
   },
 
   socials: {
@@ -152,24 +156,50 @@ export const EXPERTISE = [
     num: "01",
     title: "PRODUCT DESIGN",
     desc: "Apps and platforms shaped around clear flows, solid structure, and real user needs.",
+    /**
+     * Explicit line breaks from the component (`node 8066:628`), which sets the
+     * description as three separate `leading-none` paragraphs. Storing them as
+     * lines keeps the copy identical to the design instead of letting the
+     * browser re-wrap it at whatever width the card happens to be.
+     */
+    descLines: [
+      "Apps and platforms shaped ",
+      "around clear flows, solid ",
+      "structure, and real user needs.",
+    ],
     img: "/expertise/01-product-design.png",
   },
   {
     num: "02",
     title: "DIGITAL EXPERIENCES",
     desc: "Websites with considered layout, pacing, and interaction.",
+    descLines: [
+      "Websites with considered ",
+      "layout, pacing, and ",
+      "interaction.",
+    ],
     img: "/expertise/02-digital-experiences.png",
   },
   {
     num: "03",
     title: "MOTION DESIGN",
     desc: "Interface animation and prototypes that show how a product moves and feels.",
+    descLines: [
+      "Interface animation and ",
+      "prototypes that show how ",
+      "a product moves and feels.",
+    ],
     img: "/expertise/03-motion-design.png",
   },
   {
     num: "04",
     title: "DESIGN SYSTEM",
     desc: "Component libraries and design tokens built for consistency, speed, and clean handoff.",
+    descLines: [
+      "Component libraries and ",
+      "design tokens built for ",
+      "consistency, speed, and clean handoff.",
+    ],
     img: "/expertise/04-design-system.png",
   },
 ] as const;
@@ -245,23 +275,20 @@ export const WORK_REVEAL = {
    */
   splitX: 261,
   /**
-   * Ink wash that fades in over the imagery as the panel fills.
-   *
-   * The heading flips to cream, but cream over a light screenshot is still
-   * weak. A light scrim over the whole panel both unifies the collage and
-   * gives the cream type something to sit on.
+   * How far the cluster grows. The 390x180 window scales uniformly, so this
+   * is a single factor — 1.55 turns it into a ~605x280 group. Enough to read
+   * as the work "opening up" with images popping into place, while keeping the
+   * cluster contained: black type stays legible over a small group, which is
+   * exactly how the design layers the words across the images.
    */
-  scrimOpacity: 0.34,
+  coverScale: 1.55,
   /**
-   * Scale the marquee window must reach to cover the panel. Uniform, so the
-   * 390x180 window has to scale by the *larger* of the two ratios (770/180)
-   * — scaling by the width ratio would leave a horizontal band uncovered.
+   * Base delay before the first tile pops up, plus the increment added per
+   * tile index, in seconds. Small and cumulative so the cluster resolves as a
+   * wave across the panel rather than everything arriving at once.
    */
-  coverScale: 770 / 180,
-  /**
-   * Progress window over which the heading flips from ink to cream. The rect
-   * underneath is dark imagery, so the heading has to change contrast with it.
-   */
-  flipFrom: 0.12,
-  flipTo: 0.6,
+  popStagger: 0.055,
+  popStep: 0.035,
+  /** How far each tile rises as it pops in, in design px. */
+  popRise: 18,
 } as const;

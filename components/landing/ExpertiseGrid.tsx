@@ -1,15 +1,25 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { HOME, EXPERTISE } from "@/lib/home";
-import { displayTop, sansTop } from "@/lib/typography";
 
+/**
+ * The four expertise cards.
+ *
+ * Geometry comes from the Figma component (`node 8066:509`): a 440x802 card
+ * with a 0.5px cream border on `#11120D`, and copy at fixed offsets — the
+ * number at `calc(50% - 167px)` / top 40.5, the title centred at
+ * `calc(50% - 16px)`, and the description centred at top 588.5 as three
+ * `leading-none` lines.
+ *
+ * The component exposes only a `Default` variant, so there is no designed
+ * hover. What the design does show is the picture swapping in behind the copy,
+ * and the copy never moving — so the hover here fades an image up underneath a
+ * copy layer that stays pinned at exactly the same coordinates.
+ */
 export function ExpertiseGrid() {
   const e = HOME.expertise;
-  // Card index under the pointer, or null. Figma expresses this as a variant
-  // swap per card; tracking it in state lets the image and the dimmed copy
-  // cross-fade together within a single 300ms EASE_OUT transition.
+  // Card index under the pointer, or null.
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
@@ -54,30 +64,50 @@ export function ExpertiseGrid() {
             top: 0,
             width: e.cardWidth,
             height: HOME.frameHeight,
+            border: `${e.cardBorderWidth}px solid #fffaf4`,
           }}
           onMouseEnter={() => setHovered(i)}
           onMouseLeave={() => setHovered((cur) => (cur === i ? null : cur))}
         >
-          {/* Copy layer is pinned above the image and never animates.
-
-              It deliberately carries no opacity transition: an opacity
-              value other than 1 promotes this layer to its own compositing
-              layer, and the text then renders twice with a few-pixel offset
-              (lines visibly ghosting over each other on hover). Only the
-              image fades; this stays fully opaque and pinned. */}
+          {/* Hover picture. Sits beneath the copy and runs the card's full
+              length, so the words stay pinned while the image fades up under
+              them rather than shifting to accommodate it. */}
           <div
-          className="absolute inset-0 z-10 transition-opacity duration-300 ease-out"
-          style={{ opacity: hovered === i ? 0 : 1 }}
-        >
+            className="pointer-events-none absolute -z-10 transition-opacity duration-500 ease-out"
+            style={{
+              left: 0,
+              top: 0,
+              width: "100%",
+              height: HOME.frameHeight,
+              opacity: hovered === i ? 1 : 0,
+              backgroundImage: `url(${item.img})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+            role="img"
+            aria-label={item.title}
+          />
+
+          {/* Copy layer sits above the image and fades out on hover.
+
+              The hover picture already has "0n", the title and the body baked
+              into the PNG, so keeping the live copy on screen as well would
+              render the words twice — and visibly out of register, because
+              the baked copy was laid out at the older per-card staggered
+              offsets while the live copy now uses Figma's single shared
+              position. Handing the copy over to the picture avoids that
+              entirely and matches how the mockup is meant to read. */}
+          <div
+            className="absolute inset-0 z-10 transition-opacity duration-200 ease-out"
+            style={{ opacity: hovered === i ? 0 : 1 }}
+          >
             <div
               className="absolute whitespace-nowrap"
               style={{
-                left: e.numberOffset,
-                top: displayTop(e.numberInkTops[i], e.numberFontSize),
+                left: e.numberLeft,
+                top: e.numberBoxTop,
                 fontSize: e.numberFontSize,
                 lineHeight: `${e.numberFontSize}px`,
-                transform: `scaleX(${e.numberScaleX})`,
-                transformOrigin: "left center",
                 fontVariantNumeric: "lining-nums",
                 fontFeatureSettings: '"lnum" 1',
               }}
@@ -85,58 +115,34 @@ export function ExpertiseGrid() {
               {item.num}
             </div>
 
-          <h3
-            className="absolute w-full text-center whitespace-nowrap"
-            style={{
-              top: displayTop(e.titleInkTops[i], e.titleFontSize),
-              fontSize: e.titleFontSize,
-              lineHeight: `${e.titleFontSize}px`,
-              transform: `scaleX(${e.titleScaleX})`,
-              transformOrigin: "center center",
-            }}
-          >
-            {item.title}
-          </h3>
+            <h3
+              className="absolute w-full text-center whitespace-nowrap"
+              style={{
+                top: e.titleBoxTop,
+                fontSize: e.titleFontSize,
+                lineHeight: `${e.titleFontSize}px`,
+              }}
+            >
+              {item.title}
+            </h3>
 
-          <p
-            className="absolute m-0 w-full px-9 text-center font-ruda"
-            style={{
-              top: sansTop(
-                e.bodyInkTops[i],
-                e.bodyFontSize,
-                e.bodyLineHeight,
-              ),
-              fontSize: e.bodyFontSize,
-              lineHeight: `${e.bodyLineHeight}px`,
-            }}
-          >
-            {item.desc}
-          </p>
+            {/* Centre-anchored on the card, exactly as `left: 219px` plus
+                `-translate-x-1/2` does in the component. */}
+            <div
+              className="absolute left-1/2 w-max -translate-x-1/2 text-center font-ruda"
+              style={{
+                top: e.bodyBoxTop,
+                fontSize: e.bodyFontSize,
+                lineHeight: `${e.bodyLineHeight}px`,
+              }}
+            >
+              {item.descLines.map((line) => (
+                <span key={line} className="block whitespace-pre">
+                  {line}
+                </span>
+              ))}
+            </div>
           </div>
-
-          {/* Hover state: only the picture changes. It runs the card's full
-              length (0,0 -> cardWidth x frameHeight) and sits beneath the copy
-              layer, so the number, title and description never shift or move —
-              they simply stay put on top of the incoming image. */}
-<div
-            className="pointer-events-none absolute -z-10"
-            style={{
-              left: 0,
-              top: 0,
-              width: e.cardWidth,
-              height: HOME.frameHeight,
-              opacity: hovered === i ? 1 : 0,
-              backgroundImage: `url(${item.img})`,
-              backgroundSize: "cover",
-              // The asset is a complete hover-state mockup: "0n", the title
-              // and the description are all baked into the PNG. Its copy sits
-              // at one fixed spot, while the live copy is staggered per card,
-              // so shift each picture to put the two back in register.
-              backgroundPosition: `center calc(50% + ${e.hoverTextShift[i]}px)`,
-            }}
-            role="img"
-            aria-label={item.title}
-          />
         </div>
       ))}
     </section>
