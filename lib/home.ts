@@ -11,67 +11,86 @@ export const HOME = {
   frameHeight: 770,
 
   /**
-   * `scaleX` values correct for a proportion mismatch: Cormorant Garamond as
-   * rendered is ~0.66 cap-height per em, while the Figma reference measures
-   * ~0.72 — so at equal cap height our letterforms come out ~12% wider. Each
-   * scaleX was fitted from the reference's measured cap height and ink width.
-   * If the Figma file turns out to use a more condensed serif, drop these.
+   * Read from the live Figma file (`node 8066:472`): `left: 94px` /
+   * `top: 66px` / `text-[208.236px]` / `#d8d0bd`, as two `leading-none`
+   * lines over a `#11120D` background.
+   *
+   * `boxTop` is Figma's text box top — already a box coordinate, so it must
+   * not go through displayTop. No `scaleX`: the design's condensed look comes
+   * from Chamberi Headline ExtraLight, and compressing Cormorant to imitate
+   * it was fighting the wrong problem.
    */
   hero: {
-    left: 91.5,
-    fontSize: 224,
-    lineHeight: 205,
-    inkTop: 101.5,
-    scaleX: 0.86,
-    // With line-height < font-size the browser's first-baseline placement
-    // drifts from the centred model in typography.ts; this lands it back.
-    topAdjust: -3.5,
+    left: 94,
+    fontSize: 208.236,
+    boxTop: 66,
   },
 
+  /**
+   * Read from the live Figma file (`node 8066:475`). Note the portrait is two
+   * stacked layers: a `#d9d9d9` placeholder (357x412) sitting 10px lower and
+   * 38px wider than the photo that covers it (319x422, `object-bottom`).
+   */
   person: {
-    headingLeft: 39.8,
-    headingFontSize: 52,
-    headingScaleX: 0.9,
-    headingInkTop: 80,
-    linkLeft: 478,
-    linkFontSize: 32,
-    linkInkTop: 633.5,
-    arrowLeft: 593,
-    arrowWidth: 21.5,
-    photo: { left: 777, top: 310, width: 356.5, height: 411.5 },
+    heading: { left: 41, fontSize: 48, boxTop: 72 },
+    link: { left: 478, fontSize: 32, boxTop: 632, gap: 15, arrowSize: 30 },
+    placeholder: { left: 777, top: 310, width: 357, height: 412 },
+    photo: { left: 777, top: 300, width: 319, height: 422 },
   },
 
-  work: { left: 308, fontSize: 212, inkTop: 344.5, scaleX: 0.87, topAdjust: -2.5 },
+  /**
+   * Read from the live Figma file (`node 8066:484`), which specifies this as
+   * `left: calc(50% - 476px)` / `top: 312px` / `text-[194px]` in
+   * Chamberi Headline ExtraLight.
+   *
+   * The design centre-positions the heading rather than pinning a fixed
+   * left edge, so it is expressed the same way here. `boxTop` is Figma's text
+   * box top (already a box coordinate, so it must not go through displayTop).
+   *
+   * No `scaleX`: the condensed look came from the design's typeface, not a
+   * transform, and compressing Cormorant to fake it was fighting the wrong
+   * problem. Cormorant is simply wider than Chamberi at the same size.
+   */
+  work: { centreOffset: 476, fontSize: 194, boxTop: 312, width: 953 },
 
+  /**
+   * Read from the live Figma file (`node 8066:485`). The list is a real column
+   * in the design — rows of text + rule separated by a 19px gap, with 27px
+   * between rows — so it is modelled as spacing rather than per-item tops.
+   * The panel background is `#d8d0bd`, not cream.
+   */
   cases: {
-    headingLeft: 91.3,
-    headingFontSize: 52,
-    headingScaleX: 0.9,
-    headingInkTop: 108,
-    listLeft: 783,
-    itemFontSize: 48,
-    itemInkTops: [173, 267, 361, 455],
-    ruleLeft: 783,
-    ruleWidth: 656.5,
-    ruleThickness: 1,
-    ruleTops: [233.5, 327.5, 421.5],
-    placeholder: { left: 91, top: 528, width: 360.5, height: 200.5 },
-    noteLeft: 783,
-    noteFontSize: 16,
-    noteLineHeight: 16,
-    noteInkTops: [693.5, 709.5],
-    viewLeft: 1296,
-    viewFontSize: 24,
-    viewInkTop: 696,
-    viewArrowLeft: 1462,
-    viewArrowWidth: 17.5,
+    heading: { left: 91, fontSize: 48, boxTop: 100 },
+    list: {
+      left: 783,
+      top: 167,
+      width: 657,
+      fontSize: 48,
+      /** Space between an item's text and its underline. */
+      ruleGap: 19,
+      /** Space between one row and the next. */
+      rowGap: 27,
+      /** Height of the four text rows themselves (Ruda at 48, leading-none). */
+      rowHeight: 48,
+    },
+    placeholder: { left: 91, top: 528, width: 361, height: 201 },
+    footnote: { left: 783, fontSize: 16, boxTop: 691, lineHeight: 16 },
+    viewAll: {
+      left: 1296,
+      fontSize: 24,
+      boxTop: 695,
+      arrow: { left: 1483, size: 24 },
+    },
   },
 
+  /**
+   * Read from the live Figma file (`node 8066:474`): the label is pinned at
+   * `left: calc(50% - 1156px)` / `top: 59px` / `text-[48px]` / `#fffaf4`.
+   * In the 2394-wide panel that resolves to x=41. Expressed as a centre offset
+   * so it tracks the panel exactly as Figma does.
+   */
   expertise: {
-    labelLeft: 42,
-    labelFontSize: 52,
-    labelScaleX: 0.9,
-    labelInkTop: 67,
+    label: { centreOffset: 1156, fontSize: 48, boxTop: 59 },
     cardWidth: 439,
     cardTops: [0, -9, -13, -16],
     borderLefts: [637, 1076, 1515, 1954, 2393.5],
@@ -218,11 +237,13 @@ export const WORK_REVEAL = {
   /**
    * How far "THE" and "WORK" travel apart, in design px.
    *
-   * Measured from the rendered heading: "THE" spans 308 -> 663 and "WORK"
-   * spans 709 -> 1261 inside the 1566 panel, so 282 lands each word flush
-   * against its edge with a small margin instead of clipping it off-screen.
+   * The heading is CSS-centred, so both words travel the same distance to
+   * reach their respective edges — a single symmetric value works. Measured
+   * at fontSize 194 in Cormorant, the heading is 1004px wide inside the
+   * 1566 panel, so its edge sits (1566 - 1004) / 2 = 281px from each side.
+   * 261 lands each word 20px shy of the edge instead of clipping it.
    */
-  splitX: 282,
+  splitX: 261,
   /**
    * Ink wash that fades in over the imagery as the panel fills.
    *

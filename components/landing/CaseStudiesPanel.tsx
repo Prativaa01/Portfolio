@@ -1,9 +1,19 @@
 import { HOME, CASE_STUDIES } from "@/lib/home";
-import { displayTop, sansTop } from "@/lib/typography";
 import { Arrow } from "./Arrow";
 
 export function CaseStudiesPanel() {
   const c = HOME.cases;
+  const { list } = c;
+
+  // Rows are laid out by spacing rather than by absolute tops, matching the
+  // column in Figma: each of the first three rows is text + rule, the last is
+  // text alone, and every row advances by its own height plus the row gap.
+  const rows = CASE_STUDIES.map((name, i) => {
+    const top =
+      list.top +
+      i * (list.rowHeight + list.ruleGap + list.rowGap);
+    return { name, top, ruled: i < CASE_STUDIES.length - 1 };
+  });
 
   return (
     <section
@@ -14,43 +24,40 @@ export function CaseStudiesPanel() {
       <h2
         className="absolute whitespace-nowrap"
         style={{
-          left: c.headingLeft,
-          top: displayTop(c.headingInkTop, c.headingFontSize),
-          fontSize: c.headingFontSize,
-          lineHeight: `${c.headingFontSize}px`,
-          transform: `scaleX(${c.headingScaleX})`,
-          transformOrigin: "left center",
+          left: c.heading.left,
+          top: c.heading.boxTop,
+          fontSize: c.heading.fontSize,
+          lineHeight: `${c.heading.fontSize}px`,
         }}
       >
         CASE STUDIES
       </h2>
 
-      {CASE_STUDIES.map((name, i) => (
-        <span
-          key={name}
-          className="absolute whitespace-nowrap font-ruda"
-          style={{
-            left: c.listLeft,
-            top: sansTop(c.itemInkTops[i], c.itemFontSize),
-            fontSize: c.itemFontSize,
-            lineHeight: `${c.itemFontSize}px`,
-          }}
-        >
-          {name}
-        </span>
-      ))}
-
-      {c.ruleTops.map((top) => (
+      {rows.map(({ name, top, ruled }) => (
         <div
-          key={top}
-          className="absolute bg-rule"
-          style={{
-            left: c.ruleLeft,
-            top,
-            width: c.ruleWidth,
-            height: c.ruleThickness,
-          }}
-        />
+          key={name}
+          className="absolute"
+          // The row needs an explicit width: an absolutely positioned box
+          // shrinks to its content, which would pull the rule in to the width
+          // of the word instead of the full 657px column Figma draws.
+          style={{ left: list.left, top, width: list.width }}
+        >
+          <span
+            className="block whitespace-nowrap font-ruda"
+            style={{
+              fontSize: list.fontSize,
+              lineHeight: `${list.rowHeight}px`,
+            }}
+          >
+            {name}
+          </span>
+          {ruled && (
+            <div
+              className="absolute left-0 w-full bg-rule"
+              style={{ top: list.rowHeight + list.ruleGap, height: 1 }}
+            />
+          )}
+        </div>
       ))}
 
       <div
@@ -83,11 +90,11 @@ export function CaseStudiesPanel() {
       <p
         className="absolute m-0"
         style={{
-          left: c.noteLeft,
-          top: displayTop(c.noteInkTops[0], c.noteFontSize, c.noteLineHeight),
-          width: c.ruleWidth,
-          fontSize: c.noteFontSize,
-          lineHeight: `${c.noteLineHeight}px`,
+          left: c.footnote.left,
+          top: c.footnote.boxTop,
+          width: list.width,
+          fontSize: c.footnote.fontSize,
+          lineHeight: `${c.footnote.lineHeight}px`,
         }}
       >
         *LIVESITE UNAVAILABLE FOR SOME INACTIVE
@@ -98,10 +105,10 @@ export function CaseStudiesPanel() {
       <span
         className="absolute whitespace-nowrap font-ruda font-extrabold"
         style={{
-          left: c.viewLeft,
-          top: sansTop(c.viewInkTop, c.viewFontSize),
-          fontSize: c.viewFontSize,
-          lineHeight: `${c.viewFontSize}px`,
+          left: c.viewAll.left,
+          top: c.viewAll.boxTop,
+          fontSize: c.viewAll.fontSize,
+          lineHeight: `${c.viewAll.fontSize}px`,
         }}
       >
         View all work
@@ -109,12 +116,12 @@ export function CaseStudiesPanel() {
       <span
         className="absolute flex items-center"
         style={{
-          left: c.viewArrowLeft,
-          top: sansTop(c.viewInkTop, c.viewFontSize),
-          height: c.viewFontSize,
+          left: c.viewAll.arrow.left,
+          top: c.viewAll.boxTop,
+          height: c.viewAll.arrow.size,
         }}
       >
-        <Arrow width={c.viewArrowWidth} stroke={2.5} />
+        <Arrow width={c.viewAll.arrow.size} stroke={2.5} />
       </span>
     </section>
   );

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HOME } from "@/lib/home";
-import { displayTop, sansTop } from "@/lib/typography";
 import { Arrow } from "./Arrow";
 
 export function PersonPanel() {
@@ -16,47 +15,52 @@ export function PersonPanel() {
       <h2
         className="absolute whitespace-nowrap"
         style={{
-          left: p.headingLeft,
-          top: displayTop(p.headingInkTop, p.headingFontSize),
-          fontSize: p.headingFontSize,
-          lineHeight: `${p.headingFontSize}px`,
-          transform: `scaleX(${p.headingScaleX})`,
-          transformOrigin: "left center",
+          left: p.heading.left,
+          top: p.heading.boxTop,
+          fontSize: p.heading.fontSize,
+          lineHeight: `${p.heading.fontSize}px`,
         }}
       >
         PERSON BEHIND THE PIXEL
       </h2>
 
-      <Link
-        href="/about-me"
-        className="absolute whitespace-nowrap font-ruda"
+      {/* Figma lays the link and its arrow out as one flex row with a 15px
+          gap, both aligned to the baseline of the 32px Ruda label. */}
+      <div
+        className="absolute flex items-end"
         style={{
-          left: p.linkLeft,
-          top: sansTop(p.linkInkTop, p.linkFontSize),
-          fontSize: p.linkFontSize,
-          lineHeight: `${p.linkFontSize}px`,
+          left: p.link.left,
+          top: p.link.boxTop,
+          gap: p.link.gap,
         }}
       >
-        Myself
-      </Link>
-      <span
-        className="absolute flex items-center"
-        style={{
-          left: p.arrowLeft,
-          top: sansTop(p.linkInkTop, p.linkFontSize),
-          height: p.linkFontSize,
-        }}
-      >
-        <Arrow width={p.arrowWidth} />
-      </span>
+        <Link
+          href="/about-me"
+          className="whitespace-nowrap font-ruda"
+          style={{
+            fontSize: p.link.fontSize,
+            lineHeight: `${p.link.fontSize}px`,
+          }}
+        >
+          Myself
+        </Link>
+        <span
+          className="flex shrink-0 items-center justify-center"
+          style={{ width: p.link.arrowSize, height: p.link.arrowSize }}
+        >
+          <Arrow width={p.link.arrowSize} />
+        </span>
+      </div>
 
+      {/* Placeholder sits behind and slightly larger than the photo, matching
+          the two stacked rectangles in node 8066:481 / 8066:482. */}
       <div
         className="absolute bg-slot"
         style={{
-          left: p.photo.left,
-          top: p.photo.top,
-          width: p.photo.width,
-          height: p.photo.height,
+          left: p.placeholder.left,
+          top: p.placeholder.top,
+          width: p.placeholder.width,
+          height: p.placeholder.height,
         }}
       />
       <Image
@@ -65,7 +69,7 @@ export function PersonPanel() {
         width={Math.round(p.photo.width)}
         height={Math.round(p.photo.height)}
         priority
-        className="absolute object-cover"
+        className="absolute object-cover object-bottom"
         style={{
           left: p.photo.left,
           top: p.photo.top,

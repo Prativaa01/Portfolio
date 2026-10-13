@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { HOME, PANEL_WIDTHS, WORK_REVEAL } from "@/lib/home";
-import { displayTop } from "@/lib/typography";
 import { useRevealProgress } from "@/lib/useRevealProgress";
 import { WorkMarquee } from "./WorkMarquee";
 
@@ -43,7 +42,7 @@ function mix(from: string, to: string, t: number) {
 }
 
 export function WorkPanel() {
-  const { left, fontSize, inkTop, scaleX, topAdjust } = HOME.work;
+  const { fontSize, boxTop } = HOME.work;
   const panelRef = useRef<HTMLElement>(null);
   const reveal = useRevealProgress(panelRef, WORK_REVEAL.travel);
 
@@ -79,16 +78,19 @@ export function WorkPanel() {
       <h2
         className="absolute z-10 whitespace-nowrap"
         style={{
-          left,
-          top: displayTop(inkTop, fontSize) + topAdjust,
+          // Figma pins this to `50% - 476px`, which is exact only for the
+          // design's own typeface: Chamberi Headline sets the string 953px
+          // wide, but Cormorant renders it 1004px, so the same offset would
+          // leave the heading ~26px off-centre. Centring on the box instead
+          // keeps it optically centred for whichever face actually loads.
+          left: "50%",
+          top: boxTop,
           fontSize,
           lineHeight: `${fontSize}px`,
-          // The heading is one left-anchored line split into two words that
-          // slide apart. Scale is applied per word so the pair stays a
-          // single optical width as they separate.
+          transform: "translateX(-50%)",
+          // Two flex children so the gap is real layout rather than margin
+          // guesswork, and each word can be translated independently.
           display: "flex",
-          transform: `scaleX(${scaleX})`,
-          transformOrigin: "left center",
           color: colour,
         }}
       >

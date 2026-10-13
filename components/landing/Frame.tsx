@@ -99,7 +99,7 @@ export function Frame({ children }: { children: ReactNode }) {
       <div
         ref={scrollerRef}
         data-frame-scroller
-        className="flex h-screen w-full items-center overflow-x-auto overflow-y-hidden bg-ink [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex h-screen w-full items-center overflow-x-auto overflow-y-hidden bg-night [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <div
           className="relative shrink-0"

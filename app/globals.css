@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
+/* Palette read from the live Figma file's style list, not sampled off the PNG
+   export: "Floral white" #FFFAF4, "bone" #D8D0BD, "SMOKY BLACK" #11120D, and
+   #0E0E0A which the file uses specifically for heading text. */
 @theme {
   --color-cream: #fffaf4;
   --color-sand: #d8d0bd;
   --color-ink: #0e0e0a;
+  /* Panel backgrounds are the "SMOKY BLACK" style, a shade lighter than the
+     heading ink rather than the same value. */
+  --color-night: #11120d;
   --color-canvas: #d8d0bd;
   --color-slot: #d9d9d9;
   --color-rule: #878787;

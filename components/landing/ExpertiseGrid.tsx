@@ -14,19 +14,19 @@ export function ExpertiseGrid() {
 
   return (
     <section
-      className="relative shrink-0 bg-ink text-cream"
+      className="relative shrink-0 bg-night text-cream"
       style={{ width: 2394, height: HOME.frameHeight }}
       aria-label="Expertise"
     >
       <h2
         className="absolute whitespace-nowrap"
         style={{
-          left: e.labelLeft,
-          top: displayTop(e.labelInkTop, e.labelFontSize),
-          fontSize: e.labelFontSize,
-          lineHeight: `${e.labelFontSize}px`,
-          transform: `scaleX(${e.labelScaleX})`,
-          transformOrigin: "left center",
+          // Figma pins this at `calc(50% - 1156px)`; kept as the same centre
+          // offset so it tracks the 2394-wide panel exactly as designed.
+          left: `calc(50% - ${e.label.centreOffset}px)`,
+          top: e.label.boxTop,
+          fontSize: e.label.fontSize,
+          lineHeight: `${e.label.fontSize}px`,
         }}
       >
         EXPERTISE

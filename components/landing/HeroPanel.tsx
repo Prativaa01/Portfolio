@@ -1,16 +1,15 @@
 "use client";
 
 import { HOME } from "@/lib/home";
-import { displayTop } from "@/lib/typography";
 import { useFrameMetrics } from "./Frame";
 
 export function HeroPanel() {
-  const { left, fontSize, lineHeight, inkTop, scaleX, topAdjust } = HOME.hero;
+  const { left, fontSize, boxTop } = HOME.hero;
   const { heroFill } = useFrameMetrics();
 
   return (
     <section
-      className="relative shrink-0 bg-ink text-cream"
+      className="relative shrink-0 bg-night"
       style={{ width: 1566 + heroFill, height: HOME.frameHeight }}
       aria-label="Prativa Dahal"
     >
@@ -18,11 +17,14 @@ export function HeroPanel() {
         className="absolute whitespace-pre-line"
         style={{
           left,
-          top: displayTop(inkTop, fontSize, lineHeight) + topAdjust,
+          // Figma's text box top for node 8066:472; each line is its own
+          // `leading-none` block, so the line box is one em tall.
+          top: boxTop,
           fontSize,
-          lineHeight: `${lineHeight}px`,
-          transform: `scaleX(${scaleX})`,
-          transformOrigin: "left center",
+          lineHeight: `${fontSize}px`,
+          // The name is set in "bone", not the cream used for headings on the
+          // light panels.
+          color: "#d8d0bd",
         }}
       >
         {"PRATIVA\nDAHAL"}
