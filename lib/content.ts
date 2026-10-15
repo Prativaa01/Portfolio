@@ -1,6 +1,6 @@
 /**
- * Geometry for the about-me horizontal scroller, read from the "Myself" frame
- * in the Figma export (scripts/figma-fetch.mjs; see design/figma-export.json).
+ * Geometry for the about-me horizontal scroller, read from the live "Myself"
+ * frame (`node 8066:522`).
  *
  * The frame contains three panels totalling 5926px. Expertise is NOT part of
  * this frame - it belongs to the landing page frame only.

@@ -38,10 +38,23 @@ body {
   font-family: var(--font-ruda), sans-serif;
 }
 
+.font-display {
+  font-family: var(--font-display), "Times New Roman", Times, serif;
+}
+
+.font-outfit {
+  font-family: var(--font-outfit), sans-serif;
+}
+
 /* Rotated -90deg text: renders bottom-to-top like the Figma frame. */
 .vertical-rl-upright {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .photo-slot {
@@ -93,8 +106,28 @@ body {
   }
 }
 
+/* Rotating photo cube behind THE WORK — matches the motion reference:
+   a photo-grid cube tumbling in place while the giant type stays fixed.
+   NOTE: referenced from a plain CSS class (not an inline style) so the
+   keyframes survive stylesheet tree-shaking. */
+@keyframes work-cube-spin {
+  from {
+    transform: rotateX(-16deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-16deg) rotateY(360deg);
+  }
+}
+
+.animate-work-cube-spin {
+  animation: work-cube-spin 16s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .photo-slot {
     background-image: none;
+  }
+  .animate-work-cube-spin {
+    animation: none !important;
   }
 }

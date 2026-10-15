@@ -1,5 +1,11 @@
 import { COPY, DESIGN } from "@/lib/content";
 
+/**
+ * Panel geometry from the live "Myself" frame (`node 8066:534`): night
+ * (`#11120D` + 20% black gradient) panel, `#e6e1d5` statement block
+ * (786px), and the 1660px philosophy row at left 1040 / top 100 with an
+ * 804px gap, centred ((1660 − 142 − 804 − 546) / 2 = 84px sides).
+ */
 export function PanelTwo() {
   return (
     <section
@@ -7,30 +13,60 @@ export function PanelTwo() {
       className="relative h-full shrink-0 bg-ink text-cream"
       aria-label="About and philosophy"
     >
-      <div className="absolute left-12 top-[100px] h-[570px] w-[786px] bg-sand text-ink">
-        <p className="absolute left-[364px] top-0 w-[532px] text-[30px] leading-[35.5px] font-thin-figma">
+      {/* Dark overlay over night, as the component root specifies. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%)",
+        }}
+      />
+
+      {/* Light block from `node 8066:535`: 786px, #e6e1d5, full height. */}
+      <div className="absolute left-0 top-0 h-full w-[786px] bg-[#e6e1d5]">
+        <p
+          className="absolute font-thin-figma text-night"
+          style={{
+            left: 48,
+            top: 100,
+            width: 532,
+            fontSize: 30,
+            lineHeight: 1.185,
+          }}
+        >
           {COPY.statement}
         </p>
 
-        <div className="absolute left-[364px] top-[470px] flex gap-[202px]">
-          {COPY.columns.map((column) => (
-            <p
-              key={column}
-              className="w-[197px] text-[16px] leading-[18.95px] font-thin-figma"
-            >
-              {column}
-            </p>
-          ))}
+        <div
+          className="absolute flex items-center text-black"
+          style={{ left: 48, top: 570, width: 605, gap: 202, fontSize: 16 }}
+        >
+          <p className="w-[215px] shrink-0 font-thin-figma">
+            {COPY.columns[0]}
+          </p>
+          <p className="w-[197px] shrink-0 font-thin-figma">
+            {COPY.columns[1]}
+          </p>
         </div>
       </div>
 
-      {/* No background: the Figma frame has zero fills here - the text sits
-          directly on the panel's own dark fill. */}
-      <div className="absolute left-[1040px] top-[100px] flex h-[84px] w-[1660px] items-start gap-[790px] px-[84px]">
-        <span className="shrink-0 text-[24px] leading-[28.4px] font-thin-figma">
+      {/* Philosophy row from `node 8066:540`. */}
+      <div
+        className="absolute flex h-[84px] items-center px-[84px] text-white"
+        style={{
+          left: 1040,
+          top: 100,
+          width: 1660,
+          gap: 804,
+          fontSize: 24,
+          lineHeight: 1.185,
+        }}
+      >
+        <span className="w-[142px] shrink-0 font-thin-figma">
           {COPY.philosophyLabel}
         </span>
-        <span className="w-[546px] text-[24px] leading-[28.4px] font-thin-figma">
+        <span className="w-[546px] shrink-0 font-thin-figma">
           {COPY.philosophyNote}
         </span>
       </div>

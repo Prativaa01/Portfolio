@@ -73,7 +73,7 @@ export const HOME = {
       /** Height of the four text rows themselves (Ruda at 48, leading-none). */
       rowHeight: 48,
     },
-    placeholder: { left: 91, top: 528, width: 361, height: 201 },
+    placeholder: { left: 91, top: 440, width: 361, height: 320 },
     footnote: { left: 783, fontSize: 16, boxTop: 691, lineHeight: 16 },
     viewAll: {
       left: 1296,
@@ -92,13 +92,14 @@ export const HOME = {
   expertise: {
     label: { centreOffset: 1156, fontSize: 48, boxTop: 59 },
     /**
-     * Card geometry from the component itself (`node 8066:509`, 440x802).
+     * Card geometry from the components (`node 8066:625` / `633` / `643` /
+     * `650`, each 440x802).
      *
-     * Figma places every card's copy at the SAME offset inside the card —
-     * `calc(50% - 167px)` / top 40.5 for the number, `calc(50% - 16px)` for
-     * the title, top 588.5 for the body. An earlier build staggered these
-     * per card off the PNG export; the live file says they are identical, so
-     * there is one set of positions here and no per-card array.
+     * The number sits at the same offset in every card — `calc(50% - 167px)` /
+     * top 40.5 at 64px. Titles are individually centred per card in Figma
+     * (`-129` / `-160` / `-117` / `-115`px offsets at 32px), which is exactly
+     * what `w-full text-center` reproduces, so there is still one title style.
+     * Body tops differ per card: 588.5 for 01, 590.5 for 02–04.
      */
     cardWidth: 440,
     cardBorderWidth: 0.5,
@@ -112,6 +113,8 @@ export const HOME = {
     bodyFontSize: 24,
     bodyLineHeight: 24,
     bodyBoxTop: 588.5,
+    /** Per-card body tops from the live components (01–04). */
+    bodyBoxTops: [588.5, 590.5, 590.5, 590.5],
     /**
      * Each expertise PNG is a full-card hover mockup with "0n", the title and
      * the description baked in. Live and baked copy now share the same slot,
@@ -137,9 +140,9 @@ export const PANEL_WIDTHS = [1566, 1566, 1566, 1566, 2394, 1258] as const;
 
 export const CASE_STUDIES = [
   "CAREMATE",
-  "VETYO",
+  "PROLEAP",
   "PRO REPAIR GURU",
-  "BROWNWOOD",
+  "AEVA",
 ] as const;
 
 export const SOCIALS = ["INSTAGRAM", "LINKEDIN", "BEHANCE", "TIKTOK"] as const;
@@ -173,10 +176,13 @@ export const EXPERTISE = [
     num: "02",
     title: "DIGITAL EXPERIENCES",
     desc: "Websites with considered layout, pacing, and interaction.",
+    /**
+     * Two lines joined by a `<br>` in the component (`node 8066:636` /
+     * `8066:641`), at top 590.5.
+     */
     descLines: [
-      "Websites with considered ",
-      "layout, pacing, and ",
-      "interaction.",
+      "Websites with considered layout, ",
+      "pacing, and interaction.",
     ],
     img: "/expertise/02-digital-experiences.png",
   },
@@ -184,21 +190,25 @@ export const EXPERTISE = [
     num: "03",
     title: "MOTION DESIGN",
     desc: "Interface animation and prototypes that show how a product moves and feels.",
+    /**
+     * Single wrapping paragraph, 371px wide, at top 590.5
+     * (`node 8066:646`). The browser wraps it exactly as Figma does.
+     */
     descLines: [
-      "Interface animation and ",
-      "prototypes that show how ",
-      "a product moves and feels.",
+      "Interface animation and prototypes that show how a product moves and feels.",
     ],
     img: "/expertise/03-motion-design.png",
   },
   {
     num: "04",
     title: "DESIGN SYSTEM",
-    desc: "Component libraries and design tokens built for consistency, speed, and clean handoff.",
+    desc: "Component libraries and design tokens built for consistency, speed, and clean handoff",
+    /**
+     * Single wrapping paragraph, 371px wide, at top 590.5
+     * (`node 8066:653`) — no trailing period in the component.
+     */
     descLines: [
-      "Component libraries and ",
-      "design tokens built for ",
-      "consistency, speed, and clean handoff.",
+      "Component libraries and design tokens built for consistency, speed, and clean handoff",
     ],
     img: "/expertise/04-design-system.png",
   },
@@ -227,25 +237,25 @@ export const PROJECTS = [
  * Values below are design px within the 1566x770 work panel.
  */
 export const MARQUEE = {
-  windowLeft: 588,
-  windowTop: 295,
-  windowWidth: 390,
-  windowHeight: 180,
-  tileWidth: 120,
+  windowLeft: 663,
+  windowTop: 275,
+  windowWidth: 240,
+  windowHeight: 220,
+  tileWidth: 72,
   /** Source tiles are landscape, ~1.7:1. */
-  tileHeight: 70,
-  tileGap: 12,
-  durationSeconds: 26,
+  tileHeight: 42,
+  tileGap: 8,
+  durationSeconds: 36,
   /**
    * Rows also drift vertically, out of phase with each other, so the cluster
    * reads as moving on both axes. Amplitude matches the ~12-19px vertical
    * swing measured across frames in the reference clip.
    */
   driftAmplitude: 14,
-  driftSeconds: 9,
+  driftSeconds: 13,
   rows: [
-    { top: 0, reverse: false },
-    { top: 100, reverse: true },
+    { top: 58, reverse: false },
+    { top: 120, reverse: true },
   ],
 } as const;
 
@@ -268,18 +278,17 @@ export const WORK_REVEAL = {
    * How far "THE" and "WORK" travel apart, in design px.
    *
    * The heading is CSS-centred, so both words travel the same distance to
-   * reach their respective edges — a single symmetric value works. Measured
-   * at fontSize 194 in Cormorant, the heading is 1004px wide inside the
-   * 1566 panel, so its edge sits (1566 - 1004) / 2 = 281px from each side.
-   * 261 lands each word 20px shy of the edge instead of clipping it.
+   * reach their respective edges — a single symmetric value works. Kept
+   * deliberately small so "THE WORK" stays centre-aligned with only a
+   * little gap for the narrower, taller image window to sit behind.
    */
-  splitX: 261,
+  splitX: 20,
   /**
-   * How far the cluster grows. The 390x180 window scales uniformly, so this
-   * is a single factor — 1.55 turns it into a ~605x280 group. Enough to read
-   * as the work "opening up" with images popping into place, while keeping the
-   * cluster contained: black type stays legible over a small group, which is
-   * exactly how the design layers the words across the images.
+   * How far the cluster grows. The 240x220 window scales uniformly, so this
+   * is a single factor — 1.55 turns it into a ~372x341 group. Narrower and
+   * shorter than before, keeping the cluster contained: black type stays
+   * legible over a small group, which is exactly how the design layers the
+   * words across the images.
    */
   coverScale: 1.55,
   /**

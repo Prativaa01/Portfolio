@@ -4,10 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { PanelOne } from "./PanelOne";
 import { PanelTwo } from "./PanelTwo";
 import { PanelThree } from "./PanelThree";
+import { WorksMenu } from "./WorksMenu";
+import { useStudy } from "./StudyContext";
 import { DESIGN } from "@/lib/content";
 
 export function HorizontalPortfolio() {
   const [scale, setScale] = useState(1);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { study, openStudy } = useStudy();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,11 +61,17 @@ export function HorizontalPortfolio() {
           }}
           className="flex absolute left-0 top-0"
         >
-          <PanelOne />
+          <PanelOne onMenuOpen={() => setMenuOpen(true)} />
           <PanelTwo />
           <PanelThree />
         </div>
       </div>
+      <WorksMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onOpenStudy={openStudy}
+        inactive={study !== null}
+      />
     </div>
   );
 }

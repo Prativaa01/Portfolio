@@ -12,10 +12,12 @@ import { HOME, EXPERTISE } from "@/lib/home";
  * `calc(50% - 16px)`, and the description centred at top 588.5 as three
  * `leading-none` lines.
  *
- * The component exposes only a `Default` variant, so there is no designed
- * hover. What the design does show is the picture swapping in behind the copy,
- * and the copy never moving — so the hover here fades an image up underneath a
- * copy layer that stays pinned at exactly the same coordinates.
+ * Hover applies the `Variant2` component (`node 8066:629` / `8066:637` and
+ * siblings): the picture fades in behind the copy under a 20% black gradient
+ * over night (`linear-gradient(90deg, rgba(0,0,0,0.2))` + `#11120D`), with
+ * the copy handed over to the picture. The hover PNGs already have "0n", the
+ * title and the body baked in at those same positions, so the live copy fades
+ * out to avoid rendering the words twice out of register.
  */
 export function ExpertiseGrid() {
   const e = HOME.expertise;
@@ -69,20 +71,20 @@ export function ExpertiseGrid() {
           onMouseEnter={() => setHovered(i)}
           onMouseLeave={() => setHovered((cur) => (cur === i ? null : cur))}
         >
-          {/* Hover picture. Sits beneath the copy and runs the card's full
-              length, so the words stay pinned while the image fades up under
-              them rather than shifting to accommodate it. */}
+          {/* Hover picture (`Variant2`). Sits beneath the copy and runs the
+              card's full length, with Figma's 20% black gradient over night
+              so the baked copy reads exactly as the component does. */}
           <div
-            className="pointer-events-none absolute -z-10 transition-opacity duration-500 ease-out"
+            className="pointer-events-none absolute transition-opacity duration-500 ease-out"
             style={{
               left: 0,
               top: 0,
               width: "100%",
               height: HOME.frameHeight,
               opacity: hovered === i ? 1 : 0,
-              backgroundImage: `url(${item.img})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
+              backgroundImage: `linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%), url(${item.img})`,
+              backgroundSize: "cover, cover",
+              backgroundPosition: "center, center",
             }}
             role="img"
             aria-label={item.title}
@@ -127,20 +129,26 @@ export function ExpertiseGrid() {
             </h3>
 
             {/* Centre-anchored on the card, exactly as `left: 219px` plus
-                `-translate-x-1/2` does in the component. */}
+                `-translate-x-1/2` does in the component. Single-paragraph
+                cards (03/04) wrap at Figma's 371px width instead. */}
             <div
-              className="absolute left-1/2 w-max -translate-x-1/2 text-center font-ruda"
+              className="absolute left-1/2 -translate-x-1/2 text-center font-ruda"
               style={{
-                top: e.bodyBoxTop,
+                top: e.bodyBoxTops[i] ?? e.bodyBoxTop,
+                width: item.descLines.length === 1 ? 371 : "max-content",
                 fontSize: e.bodyFontSize,
                 lineHeight: `${e.bodyLineHeight}px`,
               }}
             >
-              {item.descLines.map((line) => (
-                <span key={line} className="block whitespace-pre">
-                  {line}
-                </span>
-              ))}
+              {item.descLines.length === 1 ? (
+                <span className="block">{item.descLines[0]}</span>
+              ) : (
+                item.descLines.map((line) => (
+                  <span key={line} className="block whitespace-pre">
+                    {line}
+                  </span>
+                ))
+              )}
             </div>
           </div>
         </div>

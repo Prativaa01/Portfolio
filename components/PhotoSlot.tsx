@@ -34,7 +34,7 @@ export function PhotoSlot({
         sizes={sizes}
         priority={priority}
         onLoad={() => setLoaded(true)}
-        className={`object-cover transition-opacity duration-700 ${
+        className={`h-full w-full object-cover transition-opacity duration-700 ${
           loaded ? "opacity-100" : "opacity-0"
         }`}
       />

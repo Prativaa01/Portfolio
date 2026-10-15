@@ -46,7 +46,7 @@ export function WorkPanel() {
         contained group behind the words.
       */}
       <h2
-        className="absolute z-10 whitespace-nowrap"
+        className="pointer-events-none select-none absolute z-10 whitespace-nowrap"
         style={{
           // Figma pins this to `50% - 476px`, which is exact only for the
           // design's own typeface: Chamberi Headline sets the string 953px

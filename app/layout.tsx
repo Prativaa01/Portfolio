@@ -1,18 +1,27 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Ruda } from "next/font/google";
+import { Cormorant_Garamond, Outfit, Ruda } from "next/font/google";
+import { StudyProvider } from "@/components/StudyContext";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["300", "400"],
+  weight: ["300", "400", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
 const ruda = Ruda({
   variable: "--font-ruda",
   subsets: ["latin"],
-  weight: ["400", "800"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -24,8 +33,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${display.variable} ${ruda.variable} h-full antialiased`}>
-      <body className="min-h-full bg-canvas">{children}</body>
+    <html lang="en" className={`${display.variable} ${ruda.variable} ${outfit.variable} h-full antialiased`}>
+      <body className="min-h-full bg-canvas"><StudyProvider>{children}</StudyProvider></body>
     </html>
   );
 }
