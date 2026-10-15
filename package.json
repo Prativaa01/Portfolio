@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@paper-design/shaders-react": "^0.0.81",
     "gsap": "^3.15.0",
     "next": "16.3.8",
     "react": "19.2.8",
