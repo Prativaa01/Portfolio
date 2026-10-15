@@ -131,3 +131,24 @@ body {
     animation: none !important;
   }
 }
+
+/* Subtle luxury chromatic edge fringing on text hover */
+.chromatic-hover,
+h1, h2, h3, h4,
+a, button {
+  transition: text-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease-out;
+}
+
+@media (hover: hover) {
+  a:hover,
+  button:hover,
+  h2:hover,
+  h3:hover,
+  h4:hover,
+  .chromatic-hover:hover {
+    text-shadow:
+      -1px 0 rgba(255, 60, 90, 0.42),
+       1px 0 rgba(0, 220, 255, 0.42),
+       0 4px 24px rgba(0, 0, 0, 0.85);
+  }
+}
