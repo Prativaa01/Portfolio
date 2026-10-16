@@ -150,7 +150,7 @@ export const SOCIALS = ["INSTAGRAM", "LINKEDIN", "BEHANCE", "TIKTOK"] as const;
 export const SOCIAL_HREFS = [
   "https://www.instagram.com/prativa_designs/reels/?hl=en",
   "https://www.linkedin.com/in/prativadahal01",
-  "https://behance.net",
+  "https://www.behance.net/prativadahal01",
   "https://tiktok.com",
 ] as const;
 
