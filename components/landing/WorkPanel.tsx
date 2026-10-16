@@ -32,7 +32,7 @@ export function WorkPanel() {
   return (
     <section
       ref={panelRef}
-      className="relative shrink-0 overflow-hidden bg-cream text-ink"
+      className="relative z-0 shrink-0 overflow-visible bg-cream text-ink"
       style={{ width: PANEL_WIDTH, height: HOME.frameHeight }}
       aria-label="The work"
     >

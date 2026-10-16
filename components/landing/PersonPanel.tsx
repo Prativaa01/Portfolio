@@ -8,7 +8,7 @@ export function PersonPanel() {
 
   return (
     <section
-      className="relative shrink-0 bg-cream text-ink"
+      className="relative z-10 shrink-0 bg-cream text-ink"
       style={{ width: 1566, height: HOME.frameHeight }}
       aria-label="Person behind the pixel"
     >

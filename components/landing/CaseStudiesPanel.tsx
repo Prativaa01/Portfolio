@@ -79,7 +79,7 @@ export function CaseStudiesPanel() {
 
   return (
     <section
-      className="relative shrink-0 bg-sand text-ink"
+      className="relative z-10 shrink-0 bg-sand text-ink"
       style={{ width: 1566, height: HOME.frameHeight }}
       aria-label="Case studies"
     >
