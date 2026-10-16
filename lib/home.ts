@@ -148,7 +148,7 @@ export const CASE_STUDIES = [
 export const SOCIALS = ["INSTAGRAM", "LINKEDIN", "BEHANCE", "TIKTOK"] as const;
 
 export const SOCIAL_HREFS = [
-  "https://instagram.com",
+  "https://www.instagram.com/prativa_designs/reels/?hl=en",
   "https://linkedin.com",
   "https://behance.net",
   "https://tiktok.com",
