@@ -148,10 +148,17 @@ export const CASE_STUDIES = [
 export const SOCIALS = ["INSTAGRAM", "LINKEDIN", "BEHANCE", "TIKTOK"] as const;
 
 export const SOCIAL_HREFS = [
+<<<<<<< HEAD
   "https://www.instagram.com/prativa_designs/?hl=en",
   "https://www.linkedin.com/in/prativadahal01",
   "https://www.behance.net/prativadahal01",
   "https://www.tiktok.com/@prateeva.dahal8?_r=1&_t=ZS-9AD6H3uHAfJ",
+=======
+  "https://www.instagram.com/prativa_designs/reels/?hl=en",
+  "https://www.linkedin.com/in/prativadahal01",
+  "https://www.behance.net/prativadahal01",
+  "https://tiktok.com",
+>>>>>>> 9c2474f636334b59e06140544d58dd6b6d332fb7
 ] as const;
 
 export const EXPERTISE = [
