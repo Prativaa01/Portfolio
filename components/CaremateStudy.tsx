@@ -157,11 +157,14 @@ export function CaremateStudy({ open, onClose }: { open: boolean; onClose: () =>
                 <MenuGlyph />
               </button>
               <div className="absolute left-0 top-[83.75px] h-px w-[115px] bg-[#565448]" />
-              <div className="absolute left-[61px] top-[300px] flex w-6 flex-col items-center">
-                <span className="vertical-rl-upright text-[24px] leading-6 tracking-[0.01em]">
+              {/* Vertical name centered in the sidebar, year pinned near the
+                  bottom. */}
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <span className="vertical-rl-upright text-[32px] leading-8 tracking-[0.01em]">
                   {COPY.name}
                 </span>
-                <span aria-hidden="true" className="h-[247px] w-0 shrink-0" />
+              </div>
+              <div className="pointer-events-none absolute bottom-[18px] left-0 flex w-full justify-center">
                 <span className="vertical-rl-upright text-center text-[15px] leading-[15px]">
                   {COPY.year}
                 </span>

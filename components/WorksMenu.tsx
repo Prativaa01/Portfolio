@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { COPY } from "@/lib/content";
-import { ContactCard } from "./ContactCard";
+import { CONTACT } from "@/lib/contact";
 
 /**
  * Menu / Works overlay from the live "Works" frame (`node 8066:548`).
@@ -25,12 +25,19 @@ const WORKS_PANEL_X = 1566;
  */
 const MENU_COVER_BUFFER = 32;
 
-/** Which card opens which case study (card 03 has none yet). */
-export type StudyKey = "caremate" | "caremate-full" | "aeva" | "aeva-full" | "proleap";
+/** Which card opens which case study. */
+export type StudyKey =
+  | "caremate"
+  | "caremate-full"
+  | "aeva"
+  | "aeva-full"
+  | "proleap"
+  | "arkiva"
+  | "arkiva-full";
 const STUDY_FOR_CARD: (StudyKey | undefined)[] = [
   "caremate",
   "aeva",
-  undefined,
+  "arkiva",
   "proleap",
 ];
 
@@ -70,15 +77,15 @@ const CARDS = [
   },
   {
     num: "03.",
-    name: "PRO REPAIR GURU",
-    category: "E-commerce-2025",
-    img: "/images/works/pro-repair-guru.jpg",
+    name: "ARKIVA",
+    category: "SaaS-2026",
+    img: "/images/works/arkiva.png",
     width: 1024,
     height: 682,
     left: 837,
     top: 317,
     nameMl: 86,
-    catMl: 71,
+    catMl: 86,
   },
   {
     num: "04.",
@@ -91,16 +98,17 @@ const CARDS = [
     left: 1165,
     top: 395,
     nameMl: 86,
-    catMl: 71,
+    catMl: 86,
   },
 ] as const;
 
 /** Socials + hrefs from `node 8066:566` (designer's real profiles). */
 const SOCIALS = [
-  { label: "INSTAGRAM", href: "https://www.instagram.com/prativa_designs/?hl=en", width: 128 },
-  { label: "LINKEDIN", href: "https://www.linkedin.com/in/prativadahal01", width: 96 },
-  { label: "BEHANCE", href: "https://www.behance.net/prativadahal01", width: 105 },
-  { label: "TIKTOK", href: "https://www.tiktok.com/@prateeva.dahal8?_r=1&_t=ZS-9AD6H3uHAfJ", width: 82 },
+  { label: "INSTAGRAM", href: "https://www.instagram.com/prativa_designs/?hl=en", width: 102 },
+  { label: "LINKEDIN", href: "https://www.linkedin.com/in/prativadahal01", width: 77 },
+  { label: "BEHANCE", href: "https://www.behance.net/prativadahal01", width: 84 },
+  { label: "MAIL", href: `mailto:${CONTACT.email}`, width: 42 },
+  { label: "DISCORD", href: CONTACT.discord.url, width: 72 },
 ] as const;
 
 export function WorksMenu({
@@ -228,35 +236,30 @@ export function WorksMenu({
               {/* Sidebar: cream 0.25px border on night (`node 8066:551`). */}
               <div className="absolute left-0 top-0 h-full w-[115px] border-[0.25px] border-cream">
                 {/* Menu-state glyph (`node 8066:557` "Vector"): a single 28px
-                    white dash where the hamburger was — doubles as close. */}
-                <button
-                  type="button"
+                    white dash where the hamburger was — closes the menu and
+                    returns to the landing page. */}
+                <Link
+                  href="/"
                   onClick={onClose}
-                  aria-label="Close menu"
-                  className="absolute cursor-pointer"
-                  style={{ left: 58, top: 42 }}
+                  aria-label="Close menu and go to home page"
+                  className="absolute flex cursor-pointer items-center justify-center"
+                  style={{ left: 48.5, top: 18.5, width: 48, height: 48 }}
                 >
                   <svg width="29" height="1" viewBox="0 0 29 1" fill="none" aria-hidden="true">
                     <path d="M28.5 0.5H0.5" stroke="white" strokeLinecap="round" />
                   </svg>
-                </button>
+                </Link>
                 <div className="absolute left-0 top-[84px] h-px w-[115px] bg-cream" />
 
-                <div className="absolute left-[61px] top-[300px] flex w-6 flex-col items-center">
-                  <span className="vertical-rl-upright text-[24px] leading-6 tracking-[0.01em]">
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                  <span className="vertical-rl-upright text-[32px] leading-8 tracking-[0.01em]">
                     {COPY.name}
                   </span>
-                  <span aria-hidden="true" className="h-[247px] w-0 shrink-0" />
+                </div>
+                <div className="pointer-events-none absolute bottom-[18px] left-0 flex w-full justify-center">
                   <span className="vertical-rl-upright text-center text-[15px] leading-[15px]">
                     {COPY.year}
                   </span>
-                </div>
-
-                {/* Minus glyph (`node 8066:556`, akar-icons:minus). */}
-                <div className="absolute" style={{ left: 45.75, top: 372.75 }} aria-hidden="true">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M5 12h14" stroke="#FFFAF4" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
                 </div>
               </div>
 
@@ -291,40 +294,36 @@ export function WorksMenu({
                 </button>
               </nav>
 
-              {/* Contact Me card near nav — sends directly to Discord */}
-              <div
-                className="absolute z-20"
-                style={{ left: 740, top: 180 }}
-              >
-                <ContactCard variant="panel" />
-              </div>
-
               {/* CLOSE + socials column from `node 8066:562`. */}
               <div
                 className="absolute flex flex-col items-end"
                 style={{ left: 1043, top: 90, width: 441, gap: 544 }}
               >
-                <button
-                  type="button"
+                <Link
+                  href="/"
                   onClick={onClose}
                   className="cursor-pointer whitespace-nowrap leading-none"
                   style={{ fontSize: 32 }}
                 >
                   CLOSE
-                </button>
+                </Link>
                 <div className="flex items-center" style={{ gap: 10 }}>
-                  {SOCIALS.map((s) => (
-                    <a
-                      key={s.label}
-                      href={s.href}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="font-ruda leading-none underline [text-underline-position:from-font]"
-                      style={{ fontSize: 20, width: s.width }}
-                    >
-                      {s.label}
-                    </a>
-                  ))}
+                  {SOCIALS.map((s) => {
+                    const opensInBrowsers = !s.href.startsWith("mailto:");
+                    return (
+                      <a
+                        key={s.label}
+                        href={s.href}
+                        {...(opensInBrowsers
+                          ? { target: "_blank", rel: "noreferrer noopener" }
+                          : {})}
+                        className="font-ruda leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
+                        style={{ fontSize: 16, width: s.width }}
+                      >
+                        {s.label}
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             </section>
@@ -343,7 +342,7 @@ export function WorksMenu({
               </h2>
 
               {CARDS.map((card, i) => {
-                // Cards 01, 02 and 04 open their case study.
+                // Every card opens its case study.
                 const studyKey = STUDY_FOR_CARD[i];
                 const clickable = studyKey !== undefined && onOpenStudy !== undefined;
                 const CardTag = clickable ? "button" : "div";

@@ -1,3 +1,5 @@
+import { CONTACT } from "./contact";
+
 /**
  * Home page geometry, measured from the 2x Figma export of the "my portfolio"
  * frame. Every value here is in design px (image px / 2).
@@ -124,11 +126,17 @@ export const HOME = {
   },
 
   socials: {
-    fontSize: 22,
+    fontSize: 18,
     inkTop: 55.5,
-    ruleTops: [73.5, 73.5, 73.5, 73.5],
+    ruleTop: 73.5,
     ruleThickness: 1,
-    linksLefts: [740, 878, 984, 1099],
+    /**
+     * The row is right-pinned inside the panel. Figma ends the four-link row
+     * at x=1181 in the 1258-wide panel, so 77px is the original right margin;
+     * extra links grow leftwards instead of running off the panel.
+     */
+    linksRight: 77,
+    linksGap: 16,
     taglineLeft: 806.5,
     taglineFontSize: 22,
     taglineInkTop: 728.5,
@@ -141,24 +149,24 @@ export const PANEL_WIDTHS = [1566, 1566, 1566, 1566, 2394, 1258] as const;
 export const CASE_STUDIES = [
   "CAREMATE",
   "PROLEAP",
-  "PRO REPAIR GURU",
+  "ARKIVA",
   "AEVA",
 ] as const;
 
-export const SOCIALS = ["INSTAGRAM", "LINKEDIN", "BEHANCE", "TIKTOK"] as const;
+export const SOCIALS = [
+  "INSTAGRAM",
+  "LINKEDIN",
+  "BEHANCE",
+  "MAIL",
+  "DISCORD",
+] as const;
 
 export const SOCIAL_HREFS = [
-<<<<<<< HEAD
   "https://www.instagram.com/prativa_designs/?hl=en",
   "https://www.linkedin.com/in/prativadahal01",
   "https://www.behance.net/prativadahal01",
-  "https://www.tiktok.com/@prateeva.dahal8?_r=1&_t=ZS-9AD6H3uHAfJ",
-=======
-  "https://www.instagram.com/prativa_designs/reels/?hl=en",
-  "https://www.linkedin.com/in/prativadahal01",
-  "https://www.behance.net/prativadahal01",
-  "https://tiktok.com",
->>>>>>> 9c2474f636334b59e06140544d58dd6b6d332fb7
+  `mailto:${CONTACT.email}`,
+  CONTACT.discord.url,
 ] as const;
 
 export const EXPERTISE = [

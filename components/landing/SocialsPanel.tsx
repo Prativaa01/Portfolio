@@ -3,7 +3,6 @@ import { sansTop } from "@/lib/typography";
 
 export function SocialsPanel() {
   const s = HOME.socials;
-  const ruleTop = s.ruleTops[0];
 
   return (
     <section
@@ -11,30 +10,45 @@ export function SocialsPanel() {
       style={{ width: 1258, height: HOME.frameHeight }}
       aria-label="Social links"
     >
-      {SOCIALS.map((label, i) => (
-        <a
-          key={label}
-          href={SOCIAL_HREFS[i]}
-          target="_blank"
-          rel="noreferrer noopener"
-          className="absolute flex flex-col whitespace-nowrap font-ruda"
-          style={{
-            left: s.linksLefts[i],
-            // Line box bottom sits on the rule; cap height follows from there.
-            top: ruleTop - s.fontSize - 0.5,
-            fontSize: s.fontSize,
-            lineHeight: `${s.fontSize}px`,
-          }}
-        >
-          {/* Nudged so the caps clear the rule by the same 18px as the Figma
-              frame, without disturbing the rule's measured position. */}
-          <span className="relative top-[1.5px]">{label}</span>
-          <span
-            className="block w-full bg-cream"
-            style={{ height: s.ruleThickness }}
-          />
-        </a>
-      ))}
+      {/* Right-pinned row: the design's original four links end 77px from the
+          panel edge, so the row grows to the left as more are added. */}
+      <div
+        className="absolute flex font-ruda"
+        style={{
+          right: s.linksRight,
+          // Line box bottom sits on the rule; cap height follows from there.
+          top: s.ruleTop - s.fontSize - 0.5,
+          gap: s.linksGap,
+        }}
+      >
+        {SOCIALS.map((label, i) => {
+          const href = SOCIAL_HREFS[i];
+          const opensInBrowsers = !href.startsWith("mailto:");
+          return (
+            <a
+              key={label}
+              href={href}
+              {...(opensInBrowsers
+                ? { target: "_blank", rel: "noreferrer noopener" }
+                : {})}
+              className="flex flex-col whitespace-nowrap"
+              style={{
+                fontSize: s.fontSize,
+                lineHeight: `${s.fontSize}px`,
+                color: "#E8E1D3",
+              }}
+            >
+              {/* Nudged so the caps clear the rule by the same 18px as the Figma
+                  frame, without disturbing the rule's measured position. */}
+              <span className="relative top-[1.5px]">{label}</span>
+              <span
+                className="block w-full"
+                style={{ height: s.ruleThickness, backgroundColor: "#E8E1D3" }}
+              />
+            </a>
+          );
+        })}
+      </div>
 
       <p
         className="absolute m-0 font-ruda"

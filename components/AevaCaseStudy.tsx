@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
 import { useStudy } from "./StudyContext";
-import { ContactCard } from "./ContactCard";
+import { MailContactCard } from "./MailContactCard";
 
 /**
  * Full Aeva case study from the live "CASE STUDY OF AEVA" frame
@@ -233,11 +233,14 @@ export function AevaCaseStudy({ open, onClose }: { open: boolean; onClose: () =>
                   <MenuGlyph />
                 </button>
                 <div className="absolute left-0 top-[83.75px] h-px w-[115px] bg-[#565448]" />
-                <div className="absolute left-[61px] top-[271.75px] flex w-6 flex-col items-center">
-                  <span className="vertical-rl-upright text-[24px] leading-6 text-ink">
+                {/* Vertical name centered in the sidebar, year pinned near
+                    the bottom. */}
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                  <span className="vertical-rl-upright text-[32px] leading-8 text-ink">
                     {COPY.name}
                   </span>
-                  <span aria-hidden="true" className="h-[247px] w-0 shrink-0" />
+                </div>
+                <div className="pointer-events-none absolute bottom-[68px] left-0 flex w-full justify-center">
                   <span className="vertical-rl-upright text-center text-[15px] leading-[15px] text-ink">
                     {COPY.year}
                   </span>
@@ -709,7 +712,7 @@ export function AevaCaseStudy({ open, onClose }: { open: boolean; onClose: () =>
               >
                 LET’S CONNECT
               </h2>
-              <ContactCard variant="finale" />
+              <MailContactCard />
             </section>
           </div>
         </div>

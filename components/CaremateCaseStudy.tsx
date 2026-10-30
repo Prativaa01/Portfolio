@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
 import { useStudy } from "./StudyContext";
-import { ContactCard } from "./ContactCard";
+import { MailContactCard } from "./MailContactCard";
 
 /**
  * Full CareMate case study from the live "CASE STUDY OF CAREMATE" frame
@@ -96,7 +96,7 @@ function CurveV4() {
 function CurveV5() {
   return (
     <svg width="166.634" height="217.597" viewBox="0 0 166.634 217.597" fill="none" aria-hidden="true" preserveAspectRatio="none" style={{ display: "block" }}>
-      <path id="Vector 4" d="M0 217.311H58.2591V82.8531H97.2239V0.286312H166.634" stroke="#E2E8F0" stroke-width="0.572624" />
+      <path id="Vector 4" d="M0 217.311H58.2591V82.8531H97.2239V0.286312H166.634" stroke="#E2E8F0" strokeWidth="0.572624" />
     </svg>
   );
 }
@@ -408,11 +408,14 @@ export function CaremateCaseStudy({ open, onClose }: { open: boolean; onClose: (
                   <MenuGlyph />
                 </button>
                 <div className="absolute left-0 top-[83.75px] h-px w-[115px] bg-cream" />
-                <div className="absolute left-[61px] top-[271.75px] flex w-6 flex-col items-center">
-                  <span className="vertical-rl-upright text-[24px] leading-6 text-cream">
+                {/* Vertical name centered in the sidebar, year pinned near
+                    the bottom. */}
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                  <span className="vertical-rl-upright text-[32px] leading-8 text-cream">
                     {COPY.name}
                   </span>
-                  <span aria-hidden="true" className="h-[247px] w-0 shrink-0" />
+                </div>
+                <div className="pointer-events-none absolute bottom-[68px] left-0 flex w-full justify-center">
                   <span className="vertical-rl-upright text-center text-[15px] leading-[15px] text-cream">
                     {COPY.year}
                   </span>
@@ -1060,7 +1063,7 @@ export function CaremateCaseStudy({ open, onClose }: { open: boolean; onClose: (
               >
                 LET’S CONNECT
               </h2>
-              <ContactCard variant="finale" />
+              <MailContactCard />
             </section>
           </div>
         </div>

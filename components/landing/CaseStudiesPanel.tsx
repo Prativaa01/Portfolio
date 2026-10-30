@@ -43,22 +43,22 @@ export function CaseStudiesPanel() {
   // a 17px gap.
   const [hovered, setHovered] = useState<number | null>(null);
   const { openStudy } = useStudy();
-  // Which rows open a case study (PRO REPAIR GURU has none yet).
+  // Which rows open a case study.
   const STUDY_FOR_CASE: Record<string, StudyKey | undefined> = {
     CAREMATE: "caremate",
     PROLEAP: "proleap",
-    "PRO REPAIR GURU": undefined,
+    ARKIVA: "arkiva",
     AEVA: "aeva",
   };
   // Hover preview images per row. CAREMATE reuses the local
   // `/images/projects/03-caremate.png` asset (the Figma `8066:575` card
-  // image); PROLEAP and AEVA point at designer-supplied files saved under
-  // `public/images/projects/`. PRO REPAIR GURU has no preview yet, so the
-  // frame stays empty for it.
+  // image); PROLEAP, AEVA and ARKIVA point at designer-supplied files saved
+  // under `public/images/projects/`.
   const PREVIEWS: Record<string, string> = {
     CAREMATE: "/images/projects/03-caremate.png",
     PROLEAP: "/images/projects/proleap.png",
     AEVA: "/images/projects/aeva.png",
+    ARKIVA: "/images/projects/arkiva.png",
   };
 
   // Rows are laid out by spacing rather than by absolute tops, matching the
@@ -115,7 +115,14 @@ export function CaseStudiesPanel() {
           // The row needs an explicit width: an absolutely positioned box
           // shrinks to its content, which would pull the rule in to the width
           // of the word instead of the full 657px column Figma draws.
-          style={{ left: list.left, top, width: list.width }}
+          style={{
+            left: list.left,
+            top,
+            width: list.width,
+            // The global text-hover effect adds a blurred glow; the case list
+            // uses a flat bold/black hover instead.
+            textShadow: "none",
+          }}
           onMouseEnter={() => setHovered(i)}
           onMouseLeave={() => setHovered((cur) => (cur === i ? null : cur))}
         >
@@ -126,6 +133,7 @@ export function CaseStudiesPanel() {
               lineHeight: `${list.rowHeight}px`,
               gap: 17,
               color: hovered === i ? "#000000" : "#888383",
+              fontWeight: hovered === i ? 700 : 400,
             }}
           >
             <span className="block whitespace-nowrap">{name}</span>
