@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
+import { useStudy } from "./StudyContext";
 
 /**
  * ProLeap case-study overlay from the live "PROLEAP" frame
@@ -81,18 +82,19 @@ function Rule() {
 export function ProleapStudy({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [scale, setScale] = useState(1);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const { openStudy } = useStudy();
 
   useEffect(() => {
     if (!open) return;
-    const update = () => setScale(Math.min(1, window.innerHeight / FRAME_HEIGHT));
+    const update = () => setScale(Math.max(0.4, window.innerHeight / FRAME_HEIGHT));
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, [open ]);
+  }, [open]);
 
   useEffect(() => {
     if (open) scrollerRef.current?.scrollTo({ left: 0 });
-  }, [open ]);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -101,11 +103,12 @@ export function ProleapStudy({ open, onClose }: { open: boolean; onClose: () => 
     const onWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       event.preventDefault();
-      el.scrollLeft += event.deltaY;
+      const isTrackpad = Math.abs(event.deltaY) < 50;
+      el.scrollLeft += event.deltaY * (isTrackpad ? 1 : 1.5);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [open ]);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -241,12 +244,19 @@ export function ProleapStudy({ open, onClose }: { open: boolean; onClose: () => 
                       <p className="absolute whitespace-nowrap" style={{ left: -1.5, top: 0 }}>
                         Preview
                       </p>
-                      <div className="absolute flex items-center justify-center" style={{ left: 252.5, top: 0, width: 107.092, gap: 8 }}>
+                      <a
+                        href="https://proleap.io"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="absolute flex items-center justify-center cursor-pointer group hover:text-black transition-colors"
+                        style={{ left: 252.5, top: 0, width: 107.092, gap: 8 }}
+                        aria-label="Visit ProLeap live site"
+                      >
                         <p className="shrink-0 whitespace-nowrap">LIVE SITE</p>
-                        <span className="flex shrink-0 items-center justify-center" style={{ width: 12, height: 12 }}>
+                        <span className="flex shrink-0 items-center justify-center transition-transform group-hover:translate-x-0.5" style={{ width: 12, height: 12 }}>
                           <PreviewArrow />
                         </span>
-                      </div>
+                      </a>
                     </div>
                   </div>
                   <div className="flex w-full flex-col items-start" style={{ gap: 15 }}>
@@ -261,17 +271,20 @@ export function ProleapStudy({ open, onClose }: { open: boolean; onClose: () => 
             </div>
 
             {/* Next project (`node 8103:614`). */}
-            <div
-              className="absolute flex items-center leading-none"
+            <button
+              type="button"
+              onClick={() => openStudy("aeva")}
+              className="absolute flex items-center leading-none cursor-pointer group text-left"
               style={{ left: 157, top: 677, gap: 78 }}
+              aria-label="Open Aeva project"
             >
-              <p className="shrink-0 whitespace-nowrap font-ruda text-[#565448]" style={{ fontSize: 24 }}>
+              <p className="shrink-0 whitespace-nowrap font-ruda text-[#565448] group-hover:text-black transition-colors" style={{ fontSize: 24 }}>
                 Nextproject
               </p>
-              <p className="shrink-0 font-ruda font-bold text-black" style={{ width: 370, fontSize: 48 }}>
+              <p className="shrink-0 font-ruda font-bold text-black group-hover:opacity-75 transition-opacity" style={{ width: 370, fontSize: 48 }}>
                 AEVA
               </p>
-            </div>
+            </button>
 
             {/* Visual panel (`node 8103:617`): full-bleed ProLeap art. */}
             <div className="absolute left-[920px] top-0 h-[770px] w-[763px] overflow-clip">

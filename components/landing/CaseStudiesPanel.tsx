@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { HOME, CASE_STUDIES } from "@/lib/home";
 import { useStudy } from "../StudyContext";
 import type { StudyKey } from "../WorksMenu";
@@ -211,27 +212,34 @@ export function CaseStudiesPanel() {
         OR INCOMPLETE PROJECT
       </p>
 
-      <span
-        className="absolute whitespace-nowrap font-ruda font-extrabold"
+      <Link
+        href="/about-me"
+        className="group absolute flex items-center cursor-pointer transition-opacity duration-200 hover:opacity-75"
         style={{
           left: c.viewAll.left,
           top: c.viewAll.boxTop,
-          fontSize: c.viewAll.fontSize,
-          lineHeight: `${c.viewAll.fontSize}px`,
+          gap: 16,
         }}
+        aria-label="View all portfolio work"
       >
-        View all work
-      </span>
-      <span
-        className="absolute flex items-center"
-        style={{
-          left: c.viewAll.arrow.left,
-          top: c.viewAll.boxTop,
-          height: c.viewAll.arrow.size,
-        }}
-      >
-        <Arrow width={c.viewAll.arrow.size} stroke={2.5} />
-      </span>
+        <span
+          className="whitespace-nowrap font-ruda font-extrabold"
+          style={{
+            fontSize: c.viewAll.fontSize,
+            lineHeight: `${c.viewAll.fontSize}px`,
+          }}
+        >
+          View all work
+        </span>
+        <span
+          className="flex items-center transition-transform duration-200 group-hover:translate-x-1"
+          style={{
+            height: c.viewAll.arrow.size,
+          }}
+        >
+          <Arrow width={c.viewAll.arrow.size} stroke={2.5} />
+        </span>
+      </Link>
     </section>
   );
 }

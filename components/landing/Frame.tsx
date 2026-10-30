@@ -48,8 +48,7 @@ export function Frame({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const update = () => {
-      setScale(Math.min(1, window.innerHeight / HOME.frameHeight));
-      window.dispatchEvent(new Event("resize"));
+      setScale(Math.max(0.4, window.innerHeight / HOME.frameHeight));
     };
     update();
     window.addEventListener("resize", update);
@@ -81,10 +80,31 @@ export function Frame({ children }: { children: ReactNode }) {
           : event.deltaMode === 2
             ? event.deltaY * window.innerHeight
             : event.deltaY;
-      el.scrollLeft += delta;
+      // Provide responsive multiplier for desktop physical mouse wheel notches
+      const isTrackpad = Math.abs(event.deltaY) < 50;
+      el.scrollLeft += delta * (isTrackpad ? 1 : 1.5);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
+  // Keyboard navigation for desktop view (ArrowLeft / ArrowRight / PageUp / PageDown)
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      // Don't intercept if an input or textarea is active
+      const tag = (event.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+      if (event.key === "ArrowRight" || event.key === "PageDown") {
+        el.scrollBy({ left: window.innerWidth * 0.75, behavior: "smooth" });
+      } else if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        el.scrollBy({ left: -window.innerWidth * 0.75, behavior: "smooth" });
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
   // Viewport width measured in design px, so the hero always covers the fold.

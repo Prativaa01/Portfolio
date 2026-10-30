@@ -16,7 +16,7 @@ export function HorizontalPortfolio() {
 
   useEffect(() => {
     const update = () =>
-      setScale(Math.min(1, window.innerHeight / DESIGN.frameHeight));
+      setScale(Math.max(0.4, window.innerHeight / DESIGN.frameHeight));
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
@@ -34,10 +34,28 @@ export function HorizontalPortfolio() {
           : event.deltaMode === 2
             ? event.deltaY * window.innerHeight
             : event.deltaY;
-      el.scrollLeft += delta;
+      const isTrackpad = Math.abs(event.deltaY) < 50;
+      el.scrollLeft += delta * (isTrackpad ? 1 : 1.5);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      const tag = (event.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+      if (event.key === "ArrowRight" || event.key === "PageDown") {
+        el.scrollBy({ left: window.innerWidth * 0.75, behavior: "smooth" });
+      } else if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        el.scrollBy({ left: -window.innerWidth * 0.75, behavior: "smooth" });
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
   return (

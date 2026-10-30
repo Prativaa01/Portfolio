@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { COPY } from "@/lib/content";
+import { ContactCard } from "./ContactCard";
 
 /**
  * Menu / Works overlay from the live "Works" frame (`node 8066:548`).
@@ -120,11 +121,11 @@ export function WorksMenu({
 
   useEffect(() => {
     if (!open) return;
-    const update = () => setScale(Math.min(1, window.innerHeight / FRAME_HEIGHT));
+    const update = () => setScale(Math.max(0.4, window.innerHeight / FRAME_HEIGHT));
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, [open ]);
+  }, [open]);
 
   // Viewport width in screen px, so the menu panel can stretch to cover
   // the whole first screen (same heroFill idea as `Frame`).
@@ -137,12 +138,12 @@ export function WorksMenu({
     const observer = new ResizeObserver(update);
     observer.observe(el);
     return () => observer.disconnect();
-  }, [open ]);
+  }, [open]);
 
   // Start at the menu panel on every open.
   useEffect(() => {
     if (open) scrollerRef.current?.scrollTo({ left: 0 });
-  }, [open ]);
+  }, [open]);
 
   // Wheel maps to horizontal, same as the page frames.
   useEffect(() => {
@@ -152,11 +153,12 @@ export function WorksMenu({
     const onWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       event.preventDefault();
-      el.scrollLeft += event.deltaY;
+      const isTrackpad = Math.abs(event.deltaY) < 50;
+      el.scrollLeft += event.deltaY * (isTrackpad ? 1 : 1.5);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [open ]);
+  }, [open]);
 
   // ESC closes (suspended while a study overlay is on top).
   useEffect(() => {
@@ -271,24 +273,31 @@ export function WorksMenu({
                 >
                   HOME
                 </Link>
-                <button
-                  type="button"
+                <Link
+                  href="/about-me"
                   onClick={onClose}
-                  aria-current="page"
                   className="cursor-pointer whitespace-nowrap leading-[1.185] text-[#565448] transition-colors duration-200 hover:text-cream"
                   style={{ fontSize: NAV_FONT_SIZE }}
                 >
                   ABOUT
-                </button>
+                </Link>
                 <button
                   type="button"
                   onClick={scrollToWorks}
-                  className="cursor-pointer whitespace-nowrap leading-[1.185] text-[#565448] transition-colors duration-200 hover:text-cream"
+                  className="cursor-pointer whitespace-nowrap leading-[1.185] text-[#565448] transition-colors duration-200 hover:text-cream text-left"
                   style={{ fontSize: NAV_FONT_SIZE }}
                 >
                   WORKS
                 </button>
               </nav>
+
+              {/* Contact Me card near nav — sends directly to Discord */}
+              <div
+                className="absolute z-20"
+                style={{ left: 740, top: 180 }}
+              >
+                <ContactCard variant="panel" />
+              </div>
 
               {/* CLOSE + socials column from `node 8066:562`. */}
               <div

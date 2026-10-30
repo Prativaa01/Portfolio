@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
 import { useStudy } from "./StudyContext";
+import { ContactCard } from "./ContactCard";
 
 /**
  * Full Aeva case study from the live "CASE STUDY OF AEVA" frame
@@ -691,16 +692,24 @@ export function AevaCaseStudy({ open, onClose }: { open: boolean; onClose: () =>
 
             {/* Finale (`node 8115:479`). Own full-viewport black frame. */}
             <section
-              className="absolute flex items-center justify-center overflow-clip"
-              style={{ left: pConn, top: "50%", transform: "translateY(-50%)", width: connW, height: 794 }}
+              className="absolute flex flex-col items-center justify-center overflow-clip bg-black"
+              style={{
+                left: pConn,
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: connW,
+                height: 794,
+                gap: 36,
+              }}
               aria-label="Let's connect"
             >
-              <p
+              <h2
                 className="whitespace-nowrap text-center font-display leading-[1.06] text-cream"
-                style={{ fontSize: connFont }}
+                style={{ fontSize: Math.min(connFont, 140) }}
               >
                 LET’S CONNECT
-              </p>
+              </h2>
+              <ContactCard variant="finale" />
             </section>
           </div>
         </div>

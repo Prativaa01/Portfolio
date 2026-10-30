@@ -88,15 +88,15 @@ export function AevaStudy({ open, onClose }: { open: boolean; onClose: () => voi
 
   useEffect(() => {
     if (!open) return;
-    const update = () => setScale(Math.min(1, window.innerHeight / FRAME_HEIGHT));
+    const update = () => setScale(Math.max(0.4, window.innerHeight / FRAME_HEIGHT));
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, [open ]);
+  }, [open]);
 
   useEffect(() => {
     if (open) scrollerRef.current?.scrollTo({ left: 0 });
-  }, [open ]);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -105,11 +105,12 @@ export function AevaStudy({ open, onClose }: { open: boolean; onClose: () => voi
     const onWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       event.preventDefault();
-      el.scrollLeft += event.deltaY;
+      const isTrackpad = Math.abs(event.deltaY) < 50;
+      el.scrollLeft += event.deltaY * (isTrackpad ? 1 : 1.5);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [open ]);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -272,18 +273,21 @@ export function AevaStudy({ open, onClose }: { open: boolean; onClose: () => voi
               </div>
             </div>
 
-            {/* Next project (`node 8103:664`), verbatim from the design. */}
-            <div
-              className="absolute flex items-center leading-none"
+            {/* Next project */}
+            <button
+              type="button"
+              onClick={() => openStudy("caremate")}
+              className="absolute flex items-center leading-none cursor-pointer group text-left"
               style={{ left: 157, top: 677, gap: 78 }}
+              aria-label="Open Caremate project"
             >
-              <p className="shrink-0 whitespace-nowrap font-ruda text-[#565448]" style={{ fontSize: 24 }}>
+              <p className="shrink-0 whitespace-nowrap font-ruda text-[#565448] group-hover:text-black transition-colors" style={{ fontSize: 24 }}>
                 Nextproject
               </p>
-              <p className="shrink-0 font-ruda font-bold text-black" style={{ width: 370, fontSize: 48 }}>
-                AEVA
+              <p className="shrink-0 font-ruda font-bold text-black group-hover:opacity-75 transition-opacity" style={{ width: 370, fontSize: 48 }}>
+                CAREMATE
               </p>
-            </div>
+            </button>
 
             {/* Visual panel (`node 8103:667`): motion video over the
                 "MOTION VIDEO" placeholder, which stays behind as fallback. */}

@@ -148,10 +148,10 @@ export const CASE_STUDIES = [
 export const SOCIALS = ["INSTAGRAM", "LINKEDIN", "BEHANCE", "TIKTOK"] as const;
 
 export const SOCIAL_HREFS = [
-  "https://instagram.com",
-  "https://linkedin.com",
-  "https://behance.net",
-  "https://tiktok.com",
+  "https://www.instagram.com/prativa_designs/?hl=en",
+  "https://www.linkedin.com/in/prativadahal01",
+  "https://www.behance.net/prativadahal01",
+  "https://www.tiktok.com/@prateeva.dahal8?_r=1&_t=ZS-9AD6H3uHAfJ",
 ] as const;
 
 export const EXPERTISE = [
