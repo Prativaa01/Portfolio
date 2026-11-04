@@ -57,7 +57,7 @@ export function CaseStudiesPanel() {
   const PREVIEWS: Record<string, string> = {
     CAREMATE: "/images/projects/03-caremate.png",
     PROLEAP: "/images/projects/proleap.png",
-    AEVA: "/images/projects/aeva.png",
+    AEVA: "/images/projects/aeva-cover.png",
     ARKIVA: "/images/projects/arkiva.png",
   };
 
@@ -119,9 +119,9 @@ export function CaseStudiesPanel() {
             left: list.left,
             top,
             width: list.width,
-            // The global text-hover effect adds a blurred glow; the case list
-            // uses a flat bold/black hover instead.
-            textShadow: "none",
+
+
+
           }}
           onMouseEnter={() => setHovered(i)}
           onMouseLeave={() => setHovered((cur) => (cur === i ? null : cur))}
@@ -221,7 +221,7 @@ export function CaseStudiesPanel() {
       </p>
 
       <Link
-        href="/about-me"
+        href="/about-me?view=work"
         className="group absolute flex items-center cursor-pointer transition-opacity duration-200 hover:opacity-75"
         style={{
           left: c.viewAll.left,

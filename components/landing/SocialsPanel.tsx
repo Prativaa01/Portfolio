@@ -1,8 +1,12 @@
+"use client";
+
 import { HOME, SOCIALS, SOCIAL_HREFS } from "@/lib/home";
 import { sansTop } from "@/lib/typography";
+import { useContactModal } from "@/components/ContactModal";
 
 export function SocialsPanel() {
   const s = HOME.socials;
+  const { openContactModal } = useContactModal();
 
   return (
     <section
@@ -23,6 +27,30 @@ export function SocialsPanel() {
       >
         {SOCIALS.map((label, i) => {
           const href = SOCIAL_HREFS[i];
+          const isMail = label === "MAIL";
+
+          if (isMail) {
+            return (
+              <button
+                key={label}
+                type="button"
+                onClick={openContactModal}
+                className="flex cursor-pointer flex-col whitespace-nowrap border-none bg-transparent p-0 text-left font-ruda"
+                style={{
+                  fontSize: s.fontSize,
+                  lineHeight: `${s.fontSize}px`,
+                  color: "#E8E1D3",
+                }}
+              >
+                <span className="relative top-[1.5px]">{label}</span>
+                <span
+                  className="block w-full"
+                  style={{ height: s.ruleThickness, backgroundColor: "#E8E1D3" }}
+                />
+              </button>
+            );
+          }
+
           const opensInBrowsers = !href.startsWith("mailto:");
           return (
             <a

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Outfit, Ruda } from "next/font/google";
 import { StudyProvider } from "@/components/StudyContext";
+import { ContactModalProvider } from "@/components/ContactModal";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -34,7 +35,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${display.variable} ${ruda.variable} ${outfit.variable} h-full antialiased`}>
-      <body className="min-h-full bg-canvas"><StudyProvider>{children}</StudyProvider></body>
+      <body className="min-h-full bg-canvas">
+        <StudyProvider>
+          <ContactModalProvider>{children}</ContactModalProvider>
+        </StudyProvider>
+      </body>
     </html>
   );
 }

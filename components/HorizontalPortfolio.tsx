@@ -11,8 +11,19 @@ import { DESIGN } from "@/lib/content";
 export function HorizontalPortfolio() {
   const [scale, setScale] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
+  // The landing "View all work" link arrives with `?view=work`; open the
+  // menu already scrolled to the ALL WORK panel.
+  const [menuStartAtWorks, setMenuStartAtWorks] = useState(false);
   const { study, openStudy } = useStudy();
   const scrollerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("view") === "work") {
+      setMenuStartAtWorks(true);
+      setMenuOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     const update = () =>
@@ -86,7 +97,11 @@ export function HorizontalPortfolio() {
       </div>
       <WorksMenu
         open={menuOpen}
-        onClose={() => setMenuOpen(false)}
+        onClose={() => {
+          setMenuOpen(false);
+          setMenuStartAtWorks(false);
+        }}
+        startAtWorks={menuStartAtWorks}
         onOpenStudy={openStudy}
         inactive={study !== null}
       />

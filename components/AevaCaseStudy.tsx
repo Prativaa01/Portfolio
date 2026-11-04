@@ -332,7 +332,7 @@ export function AevaCaseStudy({ open, onClose }: { open: boolean; onClose: () =>
                 <div className="relative h-[794px] shrink-0 overflow-clip" style={{ width: visualW }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/images/works/case-aeva/visual.png"
+                    src="/images/works/case-aeva/visual-aeva2.png"
                     alt="Aeva campaign visual"
                     className="absolute inset-0 block h-full w-full max-w-none object-cover"
                   />

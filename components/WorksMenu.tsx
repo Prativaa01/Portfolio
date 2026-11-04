@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { COPY } from "@/lib/content";
 import { CONTACT } from "@/lib/contact";
+import { useContactModal } from "./ContactModal";
 
 /**
  * Menu / Works overlay from the live "Works" frame (`node 8066:548`).
@@ -67,7 +68,7 @@ const CARDS = [
     name: "AEVA",
     category: "E-commerce-2025",
     // Exact match: same file the case-studies panel already previews.
-    img: "/images/projects/aeva.png",
+    img: "/images/projects/aeva-cover.png",
     width: 462,
     height: 422,
     left: 481,
@@ -116,16 +117,22 @@ export function WorksMenu({
   onClose,
   onOpenStudy,
   inactive = false,
+  startAtWorks = false,
 }: {
   open: boolean;
   onClose: () => void;
   onOpenStudy?: (key: StudyKey) => void;
   /** Suspends menu shortcuts while a study overlay sits above it. */
   inactive?: boolean;
+  /** Opens scrolled to the ALL WORK panel instead of the menu panel. */
+  startAtWorks?: boolean;
 }) {
+  const { openContactModal } = useContactModal();
   const [scale, setScale] = useState(1);
   const [viewportWidth, setViewportWidth] = useState(0);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  // Once the "View all work" entry has landed, leave the user's scroll alone.
+  const startAtWorksDone = useRef(false);
 
   useEffect(() => {
     if (!open) return;
@@ -148,10 +155,30 @@ export function WorksMenu({
     return () => observer.disconnect();
   }, [open]);
 
-  // Start at the menu panel on every open.
+  // Start at the menu panel on every open — or at the ALL WORK panel when
+  // the landing "View all work" link asks for it.
   useEffect(() => {
-    if (open) scrollerRef.current?.scrollTo({ left: 0 });
-  }, [open]);
+    if (!open || startAtWorks) return;
+    scrollerRef.current?.scrollTo({ left: 0 });
+  }, [open, startAtWorks]);
+
+  // Land on ALL WORK once scale and viewport width have been measured.
+  useEffect(() => {
+    if (!open) {
+      startAtWorksDone.current = false;
+      return;
+    }
+    if (!startAtWorks || startAtWorksDone.current) return;
+    if (scale <= 0 || viewportWidth <= 0) return;
+    const menuFill = Math.max(
+      0,
+      viewportWidth / scale - MENU_PANEL_WIDTH + MENU_COVER_BUFFER,
+    );
+    scrollerRef.current?.scrollTo({
+      left: (WORKS_PANEL_X + menuFill) * scale,
+    });
+    startAtWorksDone.current = true;
+  }, [open, startAtWorks, scale, viewportWidth]);
 
   // Wheel maps to horizontal, same as the page frames.
   useEffect(() => {
@@ -309,6 +336,19 @@ export function WorksMenu({
                 </Link>
                 <div className="flex items-center" style={{ gap: 10 }}>
                   {SOCIALS.map((s) => {
+                    if (s.label === "MAIL") {
+                      return (
+                        <button
+                          key={s.label}
+                          type="button"
+                          onClick={openContactModal}
+                          className="cursor-pointer border-none bg-transparent p-0 text-left font-ruda leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
+                          style={{ fontSize: 16, width: s.width }}
+                        >
+                          {s.label}
+                        </button>
+                      );
+                    }
                     const opensInBrowsers = !s.href.startsWith("mailto:");
                     return (
                       <a
