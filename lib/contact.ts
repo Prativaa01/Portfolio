@@ -20,5 +20,5 @@ export const CONTACT = {
      */
     inviteUrl: "https://discord.gg/",
   },
-  email: "alwinbhandari303@gmail.com",
+  email: "prativad32@gmail.com",
 } as const;
