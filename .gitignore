@@ -45,3 +45,6 @@ design/
 
 # MCP / OAuth credentials — never commit
 mcp-auth.json
+
+# Local Netlify folder
+.netlify

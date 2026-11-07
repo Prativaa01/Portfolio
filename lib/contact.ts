@@ -21,10 +21,4 @@ export const CONTACT = {
     inviteUrl: "https://discord.gg/",
   },
   email: "prativad32@gmail.com",
-  /**
-   * Web3Forms access key (public by design — scoped to `email` above).
-   * Contact form submissions POST to https://api.web3forms.com/submit with this
-   * key, and Web3Forms forwards the message to that inbox. No activation needed.
-   */
-  web3FormsAccessKey: "a1189d63-a60e-4328-9e43-07712e1d1463",
 } as const;

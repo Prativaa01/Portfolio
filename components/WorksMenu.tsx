@@ -336,12 +336,17 @@ export function WorksMenu({
                 </Link>
                 <div className="flex items-center" style={{ gap: 10 }}>
                   {SOCIALS.map((s) => {
-                    if (s.label === "MAIL") {
+                    // MAIL and DISCORD both open the REACH US popup — the
+                    // message is then delivered server-side instead of
+                    // yanking the visitor into a separate mail/Web app.
+                    if (s.label === "MAIL" || s.label === "DISCORD") {
                       return (
                         <button
                           key={s.label}
                           type="button"
-                          onClick={openContactModal}
+                          onClick={() =>
+                            openContactModal(s.label === "MAIL" ? "mail" : "discord")
+                          }
                           className="cursor-pointer border-none bg-transparent p-0 text-left font-ruda leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
                           style={{ fontSize: 16, width: s.width }}
                         >

@@ -27,14 +27,17 @@ export function SocialsPanel() {
       >
         {SOCIALS.map((label, i) => {
           const href = SOCIAL_HREFS[i];
-          const isMail = label === "MAIL";
+          // MAIL hands off to the visitor's mail app pre-filled; DISCORD
+          // opens the REACH US popup so the note is relayed to Prativa's
+          // Discord server-side — neither click leaves the site.
+          const opensPopup = label === "MAIL" || label === "DISCORD";
 
-          if (isMail) {
+          if (opensPopup) {
             return (
               <button
                 key={label}
                 type="button"
-                onClick={openContactModal}
+                onClick={() => openContactModal(label === "MAIL" ? "mail" : "discord")}
                 className="flex cursor-pointer flex-col whitespace-nowrap border-none bg-transparent p-0 text-left font-ruda"
                 style={{
                   fontSize: s.fontSize,

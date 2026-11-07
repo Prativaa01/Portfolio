@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CONTACT } from "@/lib/contact";
+import { useContactModal } from "./ContactModal";
 
 /** Official Discord SVG Icon */
 export function DiscordIcon({ className = "w-5 h-5", size = 20 }: { className?: string; size?: number }) {
@@ -20,11 +21,11 @@ export function DiscordIcon({ className = "w-5 h-5", size = 20 }: { className?: 
 }
 
 /** Arrow-up-right icon */
-function ArrowExternal() {
+function ArrowRight() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
-        d="M7 17L17 7M17 7H8M17 7V16"
+        d="M5 12h14M12 5l7 7-7 7"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
@@ -45,6 +46,7 @@ export function ContactCard({
   className?: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const { openContactModal } = useContactModal();
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -118,17 +120,17 @@ export function ContactCard({
         </div>
       </div>
 
-      {/* Direct Discord CTA Button */}
-      <a
-        href={CONTACT.discord.url}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="flex w-full items-center justify-center gap-2 rounded-md bg-[#5865F2] px-4 py-3 font-ruda text-[13px] font-bold tracking-wider text-white shadow-lg shadow-[#5865F2]/25 transition-all duration-200 hover:bg-[#4752C4] hover:shadow-xl hover:shadow-[#5865F2]/40 active:translate-y-[1px]"
+      {/* Message CTA — opens the REACH US popup; the note is relayed to
+          Prativa's Discord server-side, so visitors never need the app. */}
+      <button
+        type="button"
+        onClick={() => openContactModal("discord")}
+        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-[#5865F2] px-4 py-3 font-ruda text-[13px] font-bold tracking-wider text-white shadow-lg shadow-[#5865F2]/25 transition-all duration-200 hover:bg-[#4752C4] hover:shadow-xl hover:shadow-[#5865F2]/40 active:translate-y-[1px]"
       >
         <DiscordIcon size={18} />
-        <span>Chat on Discord</span>
-        <ArrowExternal />
-      </a>
+        <span>Message me on Discord</span>
+        <ArrowRight />
+      </button>
     </div>
   );
 }

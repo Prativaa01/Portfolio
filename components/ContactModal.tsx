@@ -10,9 +10,12 @@ import {
 } from "react";
 import { CONTACT } from "@/lib/contact";
 
+/** Which entry point opened the popup: "discord" drops the reply email field. */
+type ContactChannel = "discord" | "mail";
+
 type ContactModalContextValue = {
   isOpen: boolean;
-  openContactModal: () => void;
+  openContactModal: (channel?: ContactChannel) => void;
   closeContactModal: () => void;
 };
 
@@ -28,8 +31,12 @@ export function useContactModal() {
 
 export function ContactModalProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [channel, setChannel] = useState<ContactChannel>("mail");
 
-  const openContactModal = useCallback(() => setIsOpen(true), []);
+  const openContactModal = useCallback((next: ContactChannel = "mail") => {
+    setChannel(next);
+    setIsOpen(true);
+  }, []);
   const closeContactModal = useCallback(() => setIsOpen(false), []);
 
   return (
@@ -37,7 +44,7 @@ export function ContactModalProvider({ children }: { children: ReactNode }) {
       value={{ isOpen, openContactModal, closeContactModal }}
     >
       {children}
-      <ContactModal open={isOpen} onClose={closeContactModal} />
+      <ContactModal open={isOpen} onClose={closeContactModal} channel={channel} />
     </ContactModalContext.Provider>
   );
 }
@@ -101,9 +108,11 @@ function CheckIcon() {
 export function ContactModal({
   open,
   onClose,
+  channel,
 }: {
   open: boolean;
   onClose: () => void;
+  channel: ContactChannel;
 }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -146,16 +155,20 @@ export function ContactModal({
     setErrorMessage("");
 
     const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
-    const payload = {
-      access_key: CONTACT.web3FormsAccessKey,
+    // "mail" entries ask for a reply address; "discord" entries keep just a
+    // name + note, so the `/api/contact` embed omits the Email field.
+    const payload: { name: string; message: string; email?: string } = {
       name: fullName || "Portfolio Visitor",
-      email: email.trim(),
       message: message.trim(),
-      subject: `New portfolio inquiry from ${fullName || email.trim()}`,
     };
+    if (channel === "mail") {
+      payload.email = email.trim();
+    }
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
+      // Relayed to Discord by the server-side handler in app/api/contact —
+      // the webhook URL never reaches the browser bundle.
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -172,12 +185,12 @@ export function ContactModal({
         throw new Error(data.message || "Submission rejected by server");
       }
     } catch {
-      // Graceful fallback to mailto if offline or third-party blocked
+      // Graceful fallback to mailto if the relay is unreachable
       try {
         const subject = `Portfolio message from ${fullName || "a visitor"}`;
         const body = [
           `Name: ${fullName}`,
-          `Email: ${email.trim()}`,
+          ...(email.trim() ? [`Email: ${email.trim()}`] : []),
           "",
           message.trim(),
         ].join("\n");
@@ -255,7 +268,7 @@ export function ContactModal({
                   Message Dispatched
                 </h3>
                 <p className="mt-2 max-w-sm font-ruda text-[13px] leading-relaxed text-[#b8b3a8]">
-                  Thank you for getting in touch. Your message has been sent directly to Prativa&apos;s email ({CONTACT.email}).
+                  Thank you for getting in touch. Your message has been delivered straight to Prativa&apos;s Discord.
                 </p>
               </>
             ) : (
@@ -311,34 +324,40 @@ export function ContactModal({
                     />
                   </div>
 
-                  <div>
-                    <label htmlFor="contact-email" className="sr-only">
-                      Email
-                    </label>
-                    <input
-                      id="contact-email"
-                      type="email"
-                      required
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full border-b border-[#d8d0bd]/25 bg-transparent py-2.5 font-ruda text-[15px] text-[#fffaf4] placeholder-[#878787] transition-colors focus:border-[#d8d0bd] focus:outline-none"
-                    />
-                  </div>
+                  {/* Email is asked only on "mail" entries — the Discord
+                      mode stays a name + note, with no reply field. */}
+                  {channel === "mail" && (
+                    <div>
+                      <label htmlFor="contact-email" className="sr-only">
+                        Email
+                      </label>
+                      <input
+                        id="contact-email"
+                        type="email"
+                        required
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full border-b border-[#d8d0bd]/25 bg-transparent py-2.5 font-ruda text-[15px] text-[#fffaf4] placeholder-[#878787] transition-colors focus:border-[#d8d0bd] focus:outline-none"
+                      />
+                    </div>
+                  )}
                 </div>
 
-                <label className="group flex cursor-pointer items-start gap-3 pt-2 select-none">
-                  <input
-                    type="checkbox"
-                    checked={consent}
-                    onChange={(e) => setConsent(e.target.checked)}
-                    required
-                    className="mt-0.5 h-4 w-4 cursor-pointer rounded border-[#d8d0bd]/40 bg-transparent text-[#d8d0bd] accent-[#d8d0bd] focus:ring-0 focus:ring-offset-0"
-                  />
-                  <span className="font-ruda text-[11px] leading-[16px] text-[#878787] transition-colors group-hover:text-[#d8d0bd]/80">
-                    I give permission to contact me at this email address.
-                  </span>
-                </label>
+                {channel === "mail" && (
+                  <label className="group flex cursor-pointer items-start gap-3 pt-2 select-none">
+                    <input
+                      type="checkbox"
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      required
+                      className="mt-0.5 h-4 w-4 cursor-pointer rounded border-[#d8d0bd]/40 bg-transparent text-[#d8d0bd] accent-[#d8d0bd] focus:ring-0 focus:ring-offset-0"
+                    />
+                    <span className="font-ruda text-[11px] leading-[16px] text-[#878787] transition-colors group-hover:text-[#d8d0bd]/80">
+                      I give permission to contact me at this email address.
+                    </span>
+                  </label>
+                )}
               </div>
 
               {/* Right Column: Message & Send Row */}
@@ -366,7 +385,7 @@ export function ContactModal({
 
                 <div className="flex items-center justify-between gap-4 pt-2">
                   <p className="max-w-[190px] font-ruda text-[10px] leading-tight text-[#878787]">
-                    Delivers directly to Prativa&apos;s personal inbox.
+                    Delivers directly to Prativa&apos;s Discord.
                   </p>
 
                   <button
