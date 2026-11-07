@@ -1,7 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Outfit, Ruda } from "next/font/google";
 import { StudyProvider } from "@/components/StudyContext";
 import { ContactModalProvider } from "@/components/ContactModal";
+import {
+  HOME_DESCRIPTION,
+  HOME_TITLE,
+  OG_IMAGE,
+  SITE_GRAPH_JSON_LD,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/seo";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -27,14 +35,56 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Prativa Dahal — Portfolio",
-  description:
-    "I design digital products that solve real problems through clear systems and considered motion.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: HOME_TITLE,
+    template: "%s | Prativa Dahal",
+  },
+  description: HOME_DESCRIPTION,
+  keywords: [
+    "product designer Jhapa Nepal",
+    "product designer Nepal remote",
+    "UX designer Nepal",
+    "digital product design",
+    "design systems",
+  ],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  alternates: { canonical: SITE_URL },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    url: SITE_URL,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "Prativa Dahal — Product Designer in Jhapa, Nepal" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    images: [OG_IMAGE],
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#11120d",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${display.variable} ${ruda.variable} ${outfit.variable} h-full antialiased`}>
+      <head>
+        <link rel="alternate" type="text/markdown" href="/llms.txt" title="LLM-friendly summary" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(SITE_GRAPH_JSON_LD) }}
+        />
+      </head>
       <body className="min-h-full bg-canvas">
         <StudyProvider>
           <ContactModalProvider>{children}</ContactModalProvider>
