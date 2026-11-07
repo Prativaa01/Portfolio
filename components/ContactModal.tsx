@@ -110,7 +110,7 @@ export function ContactModal({
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [consent, setConsent] = useState(true);
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "mailto" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   // Close on Escape key
@@ -147,14 +147,15 @@ export function ContactModal({
 
     const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
     const payload = {
+      access_key: CONTACT.web3FormsAccessKey,
       name: fullName || "Portfolio Visitor",
       email: email.trim(),
       message: message.trim(),
-      _subject: `New portfolio inquiry from ${fullName || email.trim()}`,
+      subject: `New portfolio inquiry from ${fullName || email.trim()}`,
     };
 
     try {
-      const response = await fetch(`https://formsubmit.co/ajax/${CONTACT.email}`, {
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,10 +164,12 @@ export function ContactModal({
         body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         setStatus("success");
       } else {
-        throw new Error("Submission rejected by server");
+        throw new Error(data.message || "Submission rejected by server");
       }
     } catch {
       // Graceful fallback to mailto if offline or third-party blocked
@@ -182,7 +185,7 @@ export function ContactModal({
         window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(
           subject,
         )}&body=${encodeURIComponent(body)}`;
-        setStatus("success");
+        setStatus("mailto");
       } catch {
         setStatus("error");
         setErrorMessage("Could not deliver automatically. You can reach out directly via " + CONTACT.email);
@@ -241,17 +244,30 @@ export function ContactModal({
           </button>
         </div>
 
-        {status === "success" ? (
+        {status === "success" || status === "mailto" ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-400">
               <CheckIcon />
             </div>
-            <h3 className="font-display text-[32px] tracking-wide text-[#fffaf4]">
-              Message Dispatched
-            </h3>
-            <p className="mt-2 max-w-sm font-ruda text-[13px] leading-relaxed text-[#b8b3a8]">
-              Thank you for getting in touch. Your message has been sent directly to Prativa&apos;s email ({CONTACT.email}).
-            </p>
+            {status === "success" ? (
+              <>
+                <h3 className="font-display text-[32px] tracking-wide text-[#fffaf4]">
+                  Message Dispatched
+                </h3>
+                <p className="mt-2 max-w-sm font-ruda text-[13px] leading-relaxed text-[#b8b3a8]">
+                  Thank you for getting in touch. Your message has been sent directly to Prativa&apos;s email ({CONTACT.email}).
+                </p>
+              </>
+            ) : (
+              <>
+                <h3 className="font-display text-[32px] tracking-wide text-[#fffaf4]">
+                  Almost Done
+                </h3>
+                <p className="mt-2 max-w-sm font-ruda text-[13px] leading-relaxed text-[#b8b3a8]">
+                  The delivery service couldn&apos;t be reached, so your email app has been opened with your details pre-filled. Just hit send to reach Prativa ({CONTACT.email}).
+                </p>
+              </>
+            )}
             <button
               type="button"
               onClick={handleReset}
