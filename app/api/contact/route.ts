@@ -2,7 +2,7 @@
  * Contact form → Discord relay.
  *
  * The browser posts the inquiry here; this server-side handler is the only
- * place that knows DISCORD_WEBHOOK_URL (`.env.local` in dev, Netlify
+ * place that knows DISCORD_WEBHOOK_URL (`.env.local` in dev, Vercel
  * environment variables in production). The URL stays off the client on
  * purpose: anyone holding a webhook URL could post into the target channel.
  *

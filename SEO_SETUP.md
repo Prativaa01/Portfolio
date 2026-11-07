@@ -1,6 +1,6 @@
 # SEO setup — pratibhadahal.com.np
 
-Your site is SEO-ready after you deploy the current changes (Netlify
+Your site is SEO-ready after you deploy the current changes (Vercel
 auto-builds on push). This file is the remaining manual checklist.
 
 ## 1. Deploy (one step)
