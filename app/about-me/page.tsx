@@ -37,7 +37,7 @@ export default function AboutMePage() {
       <section aria-labelledby="about-heading" className="w-full bg-cream px-6 py-16 text-ink md:px-16 md:py-24">
         <div className="mx-auto max-w-3xl">
           <h1 id="about-heading" className="font-ruda text-3xl font-extrabold tracking-tight md:text-4xl">
-            About Prativa Dahal, product designer in Jhapa, Nepal
+            About Prativa Dahal, product designer in Kathmandu, Nepal
           </h1>
           <p className="mt-4 font-ruda text-base leading-relaxed text-ink/80">
             {ABOUT_DESCRIPTION} Prativa designs digital products that solve

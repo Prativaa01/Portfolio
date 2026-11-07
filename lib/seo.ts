@@ -10,7 +10,7 @@
  *   statistics (a structured-data policy violation).
  */
 
-export const SITE_URL = "https://pratibhadahal.com.np";
+export const SITE_URL = "https://www.pratibhadahal.com.np"; // Canonical host — the apex 308-redirects here on Vercel.
 export const SITE_NAME = "Prativa Dahal";
 export const PERSON_ID = `${SITE_URL}/#person`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
@@ -18,17 +18,21 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const PERSON_NAME = "Prativa Dahal";
 export const JOB_TITLE = "Product Designer";
 
-/** Home `<title>` — rendered default, ≤ 60 chars. */
+/**
+ * Home `<title>` — brand-first format per positioning brief. Note: at 79
+ * chars SERP snippets may truncate the tail ("| UI/UX & Digital Products");
+ * the truncated cut still reads naturally because identity keywords lead.
+ */
 export const HOME_TITLE =
-  "Product Designer in Jhapa, Nepal | Prativa Dahal"; // 51 chars
+  "Prativa Dahal — Product Designer in Kathmandu, Nepal | UI/UX & Digital Products"; // 79 chars
 
-/** Home meta description — 140–160 chars, answer-first. */
+/** Home meta description — ≤ 160 chars, answer-first. */
 export const HOME_DESCRIPTION =
-  "Prativa Dahal is a product designer in Jhapa, Nepal. She designs apps, websites and design systems with clear structure, motion and user-centred flows.";
+  "Prativa Dahal is a product designer in Kathmandu, Nepal. She designs thoughtful digital experiences for web and mobile — open to remote, on-site and international work.";
 
-export const ABOUT_TITLE = "About the Designer in Nepal"; // + template = ≤ 60
+export const ABOUT_TITLE = "About the Product Designer in Kathmandu"; // + template = ≤ 60
 export const ABOUT_DESCRIPTION =
-  "Meet Prativa Dahal, a product designer from Jhapa, Nepal. Her approach, featured case studies and process for apps, websites and design systems.";
+  "Meet Prativa Dahal, a product designer from Kathmandu, Nepal. Her approach, featured case studies and process for apps, websites and design systems.";
 
 export const OG_IMAGE = "/opengraph-image";
 export const PORTRAIT_IMAGE = `${SITE_URL}/photos/profile.png`;
@@ -41,21 +45,27 @@ export const SAME_AS = [
 
 export const KNOWS_ABOUT = [
   "Product Design",
-  "UX Design",
-  "Digital Experiences",
-  "Motion Design",
+  "UI/UX Design",
+  "User Experience Design",
+  "Digital Product Design",
+  "Web Design",
+  "Mobile App Design",
   "Design Systems",
+  "Prototyping",
+  "Interaction Design",
+  "Motion Design",
+  "AI-assisted Design and Prototyping",
 ] as const;
 
 /** Visible on the page AND emitted as FAQPage JSON-LD — the two must match. */
 export const FAQS = [
   {
     q: "What does Prativa Dahal do?",
-    a: "Prativa Dahal is a product designer based in Jhapa, Nepal. She designs digital products that solve real problems through clear systems and considered motion — including apps, platforms, websites and brand systems. Her featured case studies are Caremate, Proleap, Arkiva and Aeva.",
+    a: "Prativa Dahal is a product designer based in Kathmandu, Nepal. She designs digital products that solve real problems through clear systems and considered motion — including apps, platforms, websites and brand systems. Her featured case studies are Caremate, Proleap, Arkiva and Aeva.",
   },
   {
     q: "Is Prativa Dahal available for freelance or remote design work?",
-    a: "Prativa works with teams locally in Nepal and remotely with clients elsewhere. For new projects, collaborations or enquiries, use the contact options on this site — email or Discord links are listed on the homepage and on the about page.",
+    a: "Prativa works remotely with clients worldwide — startups, product teams and founders — from her base in Kathmandu, Nepal, and is open to on-site and hybrid opportunities in Nepal and internationally. For new projects, collaborations or enquiries, use the contact options on this site — email or Discord links are listed on the homepage and on the about page.",
   },
   {
     q: "Which case studies are featured in this portfolio?",
@@ -91,7 +101,7 @@ export const SITE_GRAPH_JSON_LD = {
       image: PORTRAIT_IMAGE,
       address: {
         "@type": "PostalAddress",
-        addressLocality: "Jhapa",
+        addressLocality: "Kathmandu",
         addressCountry: "NP",
       },
       knowsAbout: [...KNOWS_ABOUT],

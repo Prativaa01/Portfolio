@@ -3,7 +3,7 @@ import { HOME_DESCRIPTION, PERSON_NAME, SITE_NAME, SITE_URL } from "@/lib/seo";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: `${SITE_NAME} — Product Designer in Jhapa, Nepal`,
+    name: `${SITE_NAME} — Product Designer in Kathmandu, Nepal`,
     short_name: SITE_NAME,
     description: HOME_DESCRIPTION,
     start_url: "/",

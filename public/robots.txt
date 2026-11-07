@@ -60,4 +60,4 @@ Disallow: /
 User-agent: Bytespider
 Disallow: /
 
-Sitemap: https://pratibhadahal.com.np/sitemap.xml
+Sitemap: https://www.pratibhadahal.com.np/sitemap.xml

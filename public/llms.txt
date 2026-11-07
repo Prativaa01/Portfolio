@@ -1,8 +1,8 @@
-# pratibhadahal.com.np
+# www.pratibhadahal.com.np
 
-> Prativa Dahal is a product designer in Jhapa, Nepal. She designs apps, websites and design systems with clear structure, motion and user-centred flows.
+> Prativa Dahal is a product designer in Kathmandu, Nepal, designing apps, websites and design systems with clear structure, motion and user-centred flows — and available for remote, on-site and hybrid work with international product teams.
 
-Prativa Dahal designs digital products that solve real problems through clear systems and considered motion, creating work that feels simple to use and hard to forget. She is based in Jhapa, Nepal and works locally and remotely. Her product design covers apps and platforms shaped around clear flows, solid structure and real user needs. Her digital experience design covers websites with considered layout, pacing and interaction. Her motion design covers interface animation and prototypes that show how a product moves and feels. Her design system work covers component libraries and design tokens built for consistency, speed and clean handoff.
+Prativa Dahal designs digital products that solve real problems through clear systems and considered motion, creating work that feels simple to use and hard to forget. She is based in Kathmandu, Nepal and works remotely with clients worldwide, with product teams in the US, Europe and Asia. Her product design covers apps and platforms shaped around clear flows, solid structure and real user needs. Her digital experience design covers websites with considered layout, pacing and interaction. Her motion design covers interface animation and prototypes that show how a product moves and feels. Her design system work covers component libraries and design tokens built for consistency, speed and clean handoff.
 
 ## Featured case studies
 
@@ -13,8 +13,8 @@ Prativa Dahal designs digital products that solve real problems through clear sy
 
 ## Key pages
 
-- [Home](https://pratibhadahal.com.np/): portfolio overview, case studies and expertise
-- [About](https://pratibhadahal.com.np/about-me): background, philosophy and contact
+- [Home](https://www.pratibhadahal.com.np/): portfolio overview, case studies and expertise
+- [About](https://www.pratibhadahal.com.np/about-me): background, philosophy and contact
 
 ## Contact
 

@@ -28,6 +28,11 @@ export function HeroPanel() {
           }}
         >
           {"PRATIVA\nDAHAL"}
+          {/* Visually-hidden role descriptor: the hero stays design-locked to
+              the name only, while the primary heading carries the keywords. */}
+          <span className="sr-only">
+            — Product Designer in Kathmandu, Nepal · UI/UX & digital products
+          </span>
         </h1>
       </div>
     </section>

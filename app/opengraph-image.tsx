@@ -20,7 +20,7 @@ export default function Image() {
         }}
       >
         <div style={{ fontSize: 28, letterSpacing: 6, textTransform: "uppercase" }}>
-          Product Designer · Jhapa, Nepal
+          Product Designer · Kathmandu, Nepal
         </div>
         <div style={{ fontSize: 110, lineHeight: 1, marginTop: 24 }}>PRATIVA DAHAL</div>
         <div style={{ fontSize: 34, lineHeight: 1.35, marginTop: 28, maxWidth: 900 }}>
@@ -28,7 +28,7 @@ export default function Image() {
           considered motion.
         </div>
         <div style={{ fontSize: 24, marginTop: 36, color: "#fffaf4" }}>
-          pratibhadahal.com.np
+          www.pratibhadahal.com.np
         </div>
       </div>
     ),
