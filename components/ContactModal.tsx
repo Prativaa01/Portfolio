@@ -166,8 +166,9 @@ export function ContactModal({
     }
 
     try {
-      // Relayed to Discord by the server-side handler in app/api/contact —
-      // the webhook URL never reaches the browser bundle.
+      // Dispatched by the server-side handler in app/api/contact — Discord
+      // for note-only entries, Resend email for reply-address entries. The
+      // secrets never reach the browser bundle.
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
@@ -268,7 +269,18 @@ export function ContactModal({
                   Message Dispatched
                 </h3>
                 <p className="mt-2 max-w-sm font-ruda text-[13px] leading-relaxed text-[#b8b3a8]">
-                  Thank you for getting in touch. Your message has been delivered straight to Prativa&apos;s Discord.
+                  {channel === "mail" ? (
+                    <>
+                      Thank you for reaching out. Your message has landed
+                      directly in Prativa&apos;s inbox — she&apos;ll reply to
+                      you at {email.trim()}.
+                    </>
+                  ) : (
+                    <>
+                      Thank you for getting in touch. Your message has been
+                      delivered straight to Prativa&apos;s Discord.
+                    </>
+                  )}
                 </p>
               </>
             ) : (
@@ -385,7 +397,9 @@ export function ContactModal({
 
                 <div className="flex items-center justify-between gap-4 pt-2">
                   <p className="max-w-[190px] font-ruda text-[10px] leading-tight text-[#878787]">
-                    Delivers directly to Prativa&apos;s Discord.
+                    {channel === "mail"
+                      ? "Sends straight to Prativa's email inbox."
+                      : "Delivers directly to Prativa's Discord."}
                   </p>
 
                   <button
