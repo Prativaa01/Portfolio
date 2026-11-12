@@ -6,10 +6,10 @@ Prativa Dahal designs digital products that solve real problems through clear sy
 
 ## Featured case studies
 
-- **Caremate** — case study on the homepage
-- **Proleap** — case study on the homepage
-- **Arkiva** — case study on the homepage
-- **Aeva** — case study on the homepage
+- [Caremate](https://www.pratibhadahal.com.np/case-studies/caremate) — digital health platform: symptom understanding, vetted doctor booking, remote consults and emergency access
+- [ProLeap](https://www.pratibhadahal.com.np/case-studies/proleap) — career platform combining learning, mentorship and workshops toward real career opportunities
+- [Arkiva](https://www.pratibhadahal.com.np/case-studies/arkiva) — SaaS platform giving construction companies in Nepal a branded website and management dashboard
+- [Aeva](https://www.pratibhadahal.com.np/case-studies/aeva) — lip gloss brand celebrating self-expression through color, shine and confidence
 
 ## Key pages
 

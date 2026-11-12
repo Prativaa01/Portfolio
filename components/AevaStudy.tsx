@@ -81,7 +81,16 @@ function Rule() {
   return <div aria-hidden="true" className="h-[0.5px] w-[534px] shrink-0 bg-[#565448]" />;
 }
 
-export function AevaStudy({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function AevaStudy({
+  open,
+  onClose,
+  asPage = false,
+}: {
+  open: boolean;
+  onClose: () => void;
+  /** Static-page mode: renders in flow (no fixed/dialog modal chrome). */
+  asPage?: boolean;
+}) {
   const [scale, setScale] = useState(1);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const { openStudy } = useStudy();
@@ -125,10 +134,14 @@ export function AevaStudy({ open, onClose }: { open: boolean; onClose: () => voi
 
   return (
     <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Aeva case study"
-      className="fixed inset-0 z-[60] bg-sand"
+      {...(asPage
+        ? { className: "relative bg-sand" }
+        : {
+            role: "dialog",
+            "aria-modal": true,
+            "aria-label": "Aeva case study",
+            className: "fixed inset-0 z-[60] bg-sand",
+          })}
     >
       <div
         ref={scrollerRef}

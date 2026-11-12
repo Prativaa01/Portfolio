@@ -12,7 +12,8 @@ curl -s https://www.pratibhadahal.com.np/llms.txt
 curl -s https://www.pratibhadahal.com.np/ | grep -i "<title>"
 ```
 
-- `/sitemap.xml` → 2 URLs (`https://www.pratibhadahal.com.np/` and `/about-me`)
+- `/sitemap.xml` → 6 URLs (home, `/about-me`, and the four
+  `/case-studies/<slug>` pages)
 - `<title>` → `Prativa Dahal — Product Designer in Kathmandu, Nepal | UI/UX & Digital Products`
 - `/llms.txt` → AI summary loads (optional, not a ranking factor)
 
@@ -22,7 +23,9 @@ curl -s https://www.pratibhadahal.com.np/ | grep -i "<title>"
    enter `https://www.pratibhadahal.com.np` → verify (DNS TXT is easiest).
 2. **Sitemaps** → submit `sitemap.xml`.
 3. **URL Inspection** → paste `https://www.pratibhadahal.com.np/` →
-   Request Indexing. Repeat for `/about-me`.
+   Request Indexing. Repeat for `/about-me` and the four case-study
+   URLs (`/case-studies/caremate`, `/case-studies/proleap`,
+   `/case-studies/arkiva`, `/case-studies/aeva`).
 4. After 1–2 days, check **Pages** → "Indexed" for both URLs, and
    **Enhancements** → no structured-data errors.
 

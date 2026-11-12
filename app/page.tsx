@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { LandingPage } from "@/components/LandingPage";
 import { FaqSection } from "@/components/seo/FaqSection";
-import { HOME_DESCRIPTION, HOME_TITLE, OG_IMAGE, SITE_URL } from "@/lib/seo";
+import { HOME_DESCRIPTION, HOME_TITLE, OG_IMAGE, SITE_NAME, SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
   description: HOME_DESCRIPTION,
   alternates: { canonical: SITE_URL },
   openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
     url: SITE_URL,
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,

@@ -6,6 +6,7 @@ import {
   ABOUT_PROFILE_JSON_LD,
   ABOUT_TITLE,
   OG_IMAGE,
+  SITE_NAME,
   SITE_URL,
 } from "@/lib/seo";
 
@@ -14,6 +15,8 @@ export const metadata: Metadata = {
   description: ABOUT_DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/about-me` },
   openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
     url: `${SITE_URL}/about-me`,
     title: `${ABOUT_TITLE} | Prativa Dahal`,
     description: ABOUT_DESCRIPTION,

@@ -56,6 +56,7 @@ const CARDS = [
     name: "CAREMATE",
     category: "HEALTHCARE-2026",
     img: "/images/works/caremate.png",
+    alt: "Caremate digital health platform — healthcare app case study",
     width: 720,
     height: 652,
     left: 134,
@@ -69,6 +70,7 @@ const CARDS = [
     category: "E-commerce-2025",
     // Exact match: same file the case-studies panel already previews.
     img: "/images/projects/aeva-cover.png",
+    alt: "Aeva lip gloss brand — e-commerce case study",
     width: 462,
     height: 422,
     left: 481,
@@ -81,6 +83,7 @@ const CARDS = [
     name: "ARKIVA",
     category: "SaaS-2026",
     img: "/images/works/arkiva.png",
+    alt: "Arkiva SaaS platform for construction companies — case study",
     width: 1024,
     height: 682,
     left: 837,
@@ -94,6 +97,7 @@ const CARDS = [
     category: "Pet healthcare-2026",
     // Exact match: same file the case-studies panel already previews.
     img: "/images/projects/proleap.png",
+    alt: "ProLeap career platform — career opportunities case study",
     width: 462,
     height: 422,
     left: 1165,
@@ -408,7 +412,7 @@ export function WorksMenu({
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={card.img}
-                      alt={`${card.name} project preview`}
+                      alt={card.alt}
                       className="absolute inset-0 max-w-none object-cover pointer-events-none size-full"
                     />
                   </div>

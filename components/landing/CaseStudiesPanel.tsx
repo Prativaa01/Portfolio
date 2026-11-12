@@ -60,6 +60,17 @@ export function CaseStudiesPanel() {
     AEVA: "/images/projects/aeva-cover.png",
     ARKIVA: "/images/projects/arkiva.png",
   };
+  /** Descriptive alt per preview row (truthful, from each study's own
+      overview text) instead of a generic "project preview". */
+  const PREVIEW_ALTS: Record<string, string> = {
+    CAREMATE:
+      "Caremate digital health platform — case study preview showing the healthcare app",
+    PROLEAP:
+      "ProLeap career platform — case study preview for learning, mentorship and career opportunities",
+    ARKIVA:
+      "Arkiva SaaS platform for construction companies — case study preview with website and dashboard",
+    AEVA: "Aeva lip gloss brand — e-commerce case study preview",
+  };
 
   // Rows are laid out by spacing rather than by absolute tops, matching the
   // column in Figma: each of the first three rows is text + rule, the last is
@@ -191,7 +202,7 @@ export function CaseStudiesPanel() {
             <img
               key={name}
               src={src}
-              alt={`${name} project preview`}
+              alt={PREVIEW_ALTS[name] ?? `${name} project preview`}
               className="absolute left-0 top-0 h-full w-full object-cover transition-opacity duration-300 ease-out"
               style={{
                 opacity:
