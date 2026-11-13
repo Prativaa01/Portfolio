@@ -26,7 +26,16 @@ const PANEL_WIDTH = 1566;
 const CANVAS_WIDTH = PANEL_WIDTH * 3; // 4698px
 const CANVAS_HEIGHT = 770;
 
-export function WorkCube({ reveal = 0 }: { reveal?: number }) {
+export function WorkCube({
+  reveal = 0,
+  width = CANVAS_WIDTH,
+  height = CANVAS_HEIGHT,
+}: {
+  reveal?: number;
+  /** Canvas size. The mobile layout passes a square so the cube sits inline. */
+  width?: number;
+  height?: number;
+}) {
   const mountRef = useRef<HTMLDivElement>(null);
   const revealRef = useRef(reveal);
   revealRef.current = reveal;
@@ -43,31 +52,36 @@ export function WorkCube({ reveal = 0 }: { reveal?: number }) {
       alpha: true,
       powerPreference: "high-performance",
     });
-    renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
+    renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.domElement.style.width = `${CANVAS_WIDTH}px`;
-    renderer.domElement.style.height = `${CANVAS_HEIGHT}px`;
+    renderer.domElement.style.width = `${width}px`;
+    renderer.domElement.style.height = `${height}px`;
     renderer.domElement.style.touchAction = "none";
     renderer.domElement.style.pointerEvents = "none";
     container.appendChild(renderer.domElement);
 
     // ── Scene & Camera ─────────────────────────────────────────────────────
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(38, CANVAS_WIDTH / CANVAS_HEIGHT, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
     camera.position.set(0, 0, 5.5);
 
     // Compute visible 3D world frustum at z = 0
     const vFOV = (camera.fov * Math.PI) / 180;
     const visibleHeight = 2 * Math.tan(vFOV / 2) * camera.position.z;
-    const visibleWidth = visibleHeight * (CANVAS_WIDTH / CANVAS_HEIGHT);
+    const visibleWidth = visibleHeight * (width / height);
 
     const cubeRadius = 0.95;
     const floorY = -visibleHeight / 2 + cubeRadius;
     const ceilY = visibleHeight / 2 - cubeRadius;
-    // Bumper boundaries positioned deep behind PersonPanel (left) and CaseStudiesPanel (right)
-    const leftX = -6.5;
-    const rightX = 6.5;
+    // Bumper boundaries positioned deep behind PersonPanel (left) and
+    // CaseStudiesPanel (right) on the desktop span; on a compact square
+    // canvas they clamp just outside the cube so it stays in view.
+    const leftX = -Math.min(6.5, visibleWidth / 2 + cubeRadius * 0.6);
+    const rightX = Math.min(6.5, visibleWidth / 2 + cubeRadius * 0.6);
+    // "Sent behind a neighbouring panel" reads against the desktop span;
+    // scaled down proportionally for compact canvases.
+    const behindX = Math.min(3.85, visibleWidth / 2 - 0.4);
 
     // ── Studio Lighting ────────────────────────────────────────────────────
     scene.add(new THREE.AmbientLight(0xffffff, 1.45));
@@ -312,6 +326,13 @@ export function WorkCube({ reveal = 0 }: { reveal?: number }) {
     const animate = (now: number) => {
       raf = requestAnimationFrame(animate);
 
+      // Skip all work while the canvas is hidden (the mobile layout shows
+      // the compact variant instead of this desktop-span instance).
+      if (container.offsetWidth === 0) {
+        lastTime = now;
+        return;
+      }
+
       const dt = Math.min((now - lastTime) / 1000, 0.04);
       lastTime = now;
       const timeSec = now / 1000;
@@ -400,7 +421,7 @@ export function WorkCube({ reveal = 0 }: { reveal?: number }) {
           cube.position.copy(pos);
 
           // Check if the cube was sent behind either neighboring panel
-          const isBehindNeighborPage = Math.abs(pos.x) > 3.85;
+          const isBehindNeighborPage = Math.abs(pos.x) > behindX;
           if (isBehindNeighborPage) {
             behindPageTimer += dt;
             // If sent deep behind either page, hover back to center promptly
@@ -479,13 +500,21 @@ export function WorkCube({ reveal = 0 }: { reveal?: number }) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, []);
+  }, [width, height]);
+
+  // Desktop spans three panels so the cube can fly behind neighbours; the
+  // compact mobile variant sits inline in its own square section.
+  const isSpan = width === CANVAS_WIDTH && height === CANVAS_HEIGHT;
 
   return (
     <div
       ref={mountRef}
-      className="absolute top-0 z-0 h-[770px] select-none"
-      style={{ left: "-1566px", width: "4698px" }}
+      className={
+        isSpan
+          ? "absolute top-0 z-0 h-[770px] select-none"
+          : "relative select-none"
+      }
+      style={isSpan ? { left: "-1566px", width: "4698px" } : { width, height }}
       aria-label="3D interactive project cube with physics and gravity"
       role="region"
     />

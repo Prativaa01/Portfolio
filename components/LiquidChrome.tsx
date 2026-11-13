@@ -408,6 +408,7 @@ export function LiquidChrome({
       if (!isTabVisible) return;
 
       const rect = cachedRect || canvas.getBoundingClientRect();
+      if (rect.width < 2) return;
       if (rect.right < 0 || rect.left > window.innerWidth) {
         return;
       }

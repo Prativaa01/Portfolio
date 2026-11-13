@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
 import { useStudy } from "./StudyContext";
+import { OverviewMobile } from "./mobile/StudyMobile";
 
 /**
  * CareMate case-study overlay from the live "CAREMATE" frame
@@ -130,6 +131,59 @@ export function CaremateStudy({
 
   if (!open) return null;
 
+  /** Mobile visual: the blue product panel, restacked for a narrow
+      viewport (wordmark, splash, home screen). */
+  const mobileVisual = (
+    <div
+      className="relative w-full overflow-hidden px-5 py-10"
+      style={{
+        background:
+          "linear-gradient(to bottom, #5a81fa 21.154%, #cedeff 99.99%, #f1f5f9)",
+      }}
+    >
+      <p className="text-center font-outfit text-[40px] font-semibold leading-none text-white">
+        CareMate
+      </p>
+      <p className="mt-1 text-center font-outfit text-[12px] text-white/90">
+        Healthcare
+      </p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/works/caremate-home.png"
+        alt="CareMate home screen"
+        className="mx-auto mt-8 block h-auto w-[46%] max-w-[210px]"
+        loading="lazy"
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/works/caremate-splash.png"
+        alt="CareMate splash screen"
+        className="mx-auto mt-6 block h-auto w-[74%] max-w-[340px]"
+        loading="lazy"
+      />
+      <p className="mt-6 text-center font-outfit text-[11px] leading-[1.4] text-[#696e82]">
+        {"Healthcare app \nthat everyone\nneeds"}
+      </p>
+    </div>
+  );
+
+  const mobileDoc = (
+    <OverviewMobile
+      title="CAREMATE"
+      overview="A digital health platform engineered to bridge the critical gap between feeling unwell and receiving verified clinical care. Helping people understand symptoms, schedule vetted doctors, consult remotely, and access emergency help—even in constrained network environments."
+      details={[
+        ["Type", "personal project"],
+        ["Year", "2026"],
+        ["Scope", "Product Designer"],
+      ]}
+      previewAction={{ label: "Case study", onClick: () => openStudy("caremate-full") }}
+      visual={mobileVisual}
+      next={{ name: "PROLEAP", onClick: () => openStudy("proleap") }}
+      onBack={onClose}
+      ariaLabel="CareMate case study"
+    />
+  );
+
   return (
     <div
       {...(asPage
@@ -138,9 +192,14 @@ export function CaremateStudy({
             role: "dialog",
             "aria-modal": true,
             "aria-label": "CareMate case study",
-            className: "fixed inset-0 z-[60] bg-sand",
+            className: "fixed inset-0 z-[60] overflow-y-auto bg-sand",
           })}
     >
+      {/* Mobile: vertical document. */}
+      <div className="md:hidden">{mobileDoc}</div>
+
+      {/* Desktop: scaled horizontal frame. */}
+      <div className="hidden h-full md:block">
       <div
         ref={scrollerRef}
         className="flex h-full w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -297,7 +356,7 @@ export function CaremateStudy({
               </p>
             </button>
 
-            {/* Visual panel (`node 8103:561`). */}
+              {/* Visual panel (`node 8103:561`). */}
             <div className="absolute left-[920px] top-0 h-[770px] w-[763px] overflow-clip bg-[#565448]">
               <div className="absolute inset-0 bg-gradient-to-b from-[#5a81fa] from-[21.154%] via-[#cedeff] via-[99.99%] to-[#f1f5f9]" />
               <p
@@ -350,6 +409,7 @@ export function CaremateStudy({
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

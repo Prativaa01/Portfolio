@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
 import { useStudy } from "./StudyContext";
+import { OverviewMobile } from "./mobile/StudyMobile";
 
 /**
  * Arkiva study intro. Same 1683x770 chrome as the other studies: sidebar,
@@ -131,6 +132,43 @@ export function ArkivaStudy({
 
   if (!open) return null;
 
+  /** Mobile visual: the hero film on its own #000813 field, restacked
+      for a narrow viewport. */
+  const mobileVisual = (
+    <div className="relative w-full bg-[#000813] px-5 py-10">
+      <div className="mx-auto w-full max-w-[420px]" style={{ aspectRatio: "1440 / 926" }}>
+        <video
+          className="h-full w-full object-contain"
+          src="/videos/arkiva-animation.mp4"
+          poster="/images/works/case-arkiva/hero-poster.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-label="Arkiva construction website motion reel"
+        />
+      </div>
+    </div>
+  );
+
+  const mobileDoc = (
+    <OverviewMobile
+      title="ARKIVA"
+      overview="Arkiva is a SaaS platform for small and mid-size construction companies in Nepal. Each company gets a branded public website and a dashboard to manage services, materials, and client inquiries, all on one monthly subscription."
+      details={[
+        ["Type", "SaaS Product"],
+        ["Year", "2026"],
+        ["Scope", "Product Designer"],
+      ]}
+      previewAction={{ label: "Case study", onClick: () => openStudy("arkiva-full") }}
+      visual={mobileVisual}
+      next={{ name: "AEVA", onClick: () => openStudy("aeva") }}
+      onBack={onClose}
+      ariaLabel="Arkiva case study"
+    />
+  );
+
   return (
     <div
       {...(asPage
@@ -139,9 +177,14 @@ export function ArkivaStudy({
             role: "dialog",
             "aria-modal": true,
             "aria-label": "Arkiva case study",
-            className: "fixed inset-0 z-[60] bg-sand",
+            className: "fixed inset-0 z-[60] overflow-y-auto bg-sand",
           })}
     >
+      {/* Mobile: vertical document. */}
+      <div className="md:hidden">{mobileDoc}</div>
+
+      {/* Desktop: scaled horizontal frame. */}
+      <div className="hidden h-full md:block">
       <div
         ref={scrollerRef}
         className="flex h-full w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -327,6 +370,7 @@ export function ArkivaStudy({
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

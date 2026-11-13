@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
 import { useStudy } from "./StudyContext";
+import { OverviewMobile } from "./mobile/StudyMobile";
 
 /**
  * Aeva case-study overlay from the live frame (`node 8103:620`). Same
@@ -132,6 +133,41 @@ export function AevaStudy({
 
   if (!open) return null;
 
+  /** Mobile visual: the motion-video panel on its cream campaign field. */
+  const mobileVisual = (
+    <div className="relative w-full bg-[#F8F3E0] px-4 py-8">
+      <div className="w-full border-[0.5px] border-[#565448]">
+        <video
+          className="block h-auto w-full object-contain"
+          src="/videos/aeva-animation.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-label="Aeva motion animation"
+        />
+      </div>
+    </div>
+  );
+
+  const mobileDoc = (
+    <OverviewMobile
+      title="AEVA"
+      overview="AEVA is a lip gloss brand designed to celebrate self-expression through color, shine, and confidence. With glossy finishes and versatile shades, AEVA brings a fresh, playful approach to beauty, making every lip look a little more you."
+      details={[
+        ["Type", "Personal Project"],
+        ["Year", "2026"],
+        ["Scope", "Brand Identity & Product Design"],
+      ]}
+      previewAction={{ label: "Case study", onClick: () => openStudy("aeva-full") }}
+      visual={mobileVisual}
+      next={{ name: "CAREMATE", onClick: () => openStudy("caremate") }}
+      onBack={onClose}
+      ariaLabel="Aeva case study"
+    />
+  );
+
   return (
     <div
       {...(asPage
@@ -140,9 +176,14 @@ export function AevaStudy({
             role: "dialog",
             "aria-modal": true,
             "aria-label": "Aeva case study",
-            className: "fixed inset-0 z-[60] bg-sand",
+            className: "fixed inset-0 z-[60] overflow-y-auto bg-sand",
           })}
     >
+      {/* Mobile: vertical document. */}
+      <div className="md:hidden">{mobileDoc}</div>
+
+      {/* Desktop: scaled horizontal frame. */}
+      <div className="hidden h-full md:block">
       <div
         ref={scrollerRef}
         className="flex h-full w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -341,6 +382,7 @@ export function AevaStudy({
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

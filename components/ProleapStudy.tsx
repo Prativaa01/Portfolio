@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
 import { useStudy } from "./StudyContext";
+import { OverviewMobile } from "./mobile/StudyMobile";
 
 /**
  * ProLeap case-study overlay from the live "PROLEAP" frame
@@ -130,6 +131,36 @@ export function ProleapStudy({
 
   if (!open) return null;
 
+  /** Mobile visual: the full-bleed ProLeap artwork panel. */
+  const mobileVisual = (
+    <div className="w-full bg-[#eef0f2]">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/works/proleap-hero.png"
+        alt="ProLeap brand artwork"
+        className="block h-auto w-full object-cover"
+        loading="lazy"
+      />
+    </div>
+  );
+
+  const mobileDoc = (
+    <OverviewMobile
+      title="PROLEAP"
+      overview="ProLeap is a career-focused platform designed to help people discover their potential, build skills, and connect with real career opportunities. It brings together learning, mentorship, workshops, and career resources to create a more practical and guided path toward career growth"
+      details={[
+        ["Type", "Office project"],
+        ["Year", "2026"],
+        ["Scope", "Product Designer"],
+      ]}
+      previewAction={{ label: "LIVE SITE", href: "https://proleap.kharaayo.com/" }}
+      visual={mobileVisual}
+      next={{ name: "AEVA", onClick: () => openStudy("aeva") }}
+      onBack={onClose}
+      ariaLabel="ProLeap case study"
+    />
+  );
+
   return (
     <div
       {...(asPage
@@ -138,9 +169,14 @@ export function ProleapStudy({
             role: "dialog",
             "aria-modal": true,
             "aria-label": "ProLeap case study",
-            className: "fixed inset-0 z-[60] bg-sand",
+            className: "fixed inset-0 z-[60] overflow-y-auto bg-sand",
           })}
     >
+      {/* Mobile: vertical document. */}
+      <div className="md:hidden">{mobileDoc}</div>
+
+      {/* Desktop: scaled horizontal frame. */}
+      <div className="hidden h-full md:block">
       <div
         ref={scrollerRef}
         className="flex h-full w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -313,6 +349,7 @@ export function ProleapStudy({
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

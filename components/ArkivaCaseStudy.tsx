@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { COPY } from "@/lib/content";
 import { MailContactCard } from "./MailContactCard";
+import { StudyMobileDoc } from "./mobile/StudyMobile";
 
 /**
  * Full Arkiva case study, built from the designer-supplied board
@@ -169,13 +170,353 @@ export function ArkivaCaseStudy({ open, onClose }: { open: boolean; onClose: () 
   const pConn = pFinal + finalW;
   const frameWidth = pConn + connW;
 
+  /* ── Mobile document ───────────────────────────────────────────────────
+     Same copy and section order as the horizontal board, restacked
+     vertically for below-768px viewports. */
+
+  const mobileBrandVisual = (
+    <div className="relative w-full overflow-hidden bg-[#003566] px-5 py-10">
+      <p className="font-display text-[64px] leading-[0.9] tracking-[-0.02em] text-[#d9dde4]">
+        ARKIVA
+      </p>
+      <p className="mt-4 font-ruda text-[13px] leading-[1.65] text-[#9fb0c9]">
+        Arkiva is a SaaS platform for small and mid-size construction companies in Nepal. Each company
+        gets a branded public website and a dashboard to manage services, materials, and client
+        inquiries, all on one monthly subscription.
+      </p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/works/case-arkiva/dashboard.png"
+        alt="Arkiva workspace subscription screen"
+        className="mt-8 block h-auto w-full"
+        loading="lazy"
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/works/case-arkiva/laptop.png"
+        alt="Arkiva construction website on a laptop"
+        className="mt-6 block h-auto w-full"
+        loading="lazy"
+      />
+    </div>
+  );
+
+  const mobilePersonaBio = (
+    <div
+      className="w-full border px-5 py-5"
+      style={{ borderColor: "rgba(86,84,72,0.4)", backgroundColor: "rgba(255,250,244,0.55)" }}
+    >
+      <p className="font-ruda text-[15px] font-bold text-[#0E0E0A]">RAMESH KC</p>
+      <p className="font-ruda text-[14px] text-[#565448]">42 Years, Owner, Construction Company</p>
+      <p className="mt-3 font-ruda text-[14px] leading-[1.65] text-[#565448]">
+        Ramesh runs a mid-size construction company in Biratnagar with a team of eight. Clients reach him
+        through phone calls, Facebook messages, and WhatsApp, and he tracks quotes in a notebook and a
+        spreadsheet. When site visits keep him busy, replies slip by a day or two, and some clients go to
+        another contractor.
+      </p>
+      <p className="mt-3 font-ruda text-[14px] leading-[1.65] text-[#565448]">
+        He wants one place to see every inquiry and its status, a professional website to show his past
+        projects, and a simple way to let his estimator handle quotes. He doesn’t have the budget or time
+        for a custom website or heavy software.
+      </p>
+    </div>
+  );
+
+  const mobileWireGrid = (
+    <div className="grid grid-cols-2 gap-3">
+      {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+        <div key={n} className="overflow-hidden bg-[#565448]/5" style={{ aspectRatio: "501 / 352" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/images/works/case-arkiva/wire-${n}.png`}
+            alt={`Arkiva hi-fi screen ${n}`}
+            className="block h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      ))}
+    </div>
+  );
+
+  const mobileDoc = (
+    <StudyMobileDoc
+      title="ARKIVA"
+      onBack={onClose}
+      chromeTone="night"
+      ariaLabel="Arkiva full case study"
+      intro={{
+        text: "Arkiva is a SaaS platform for small and mid-size construction companies in Nepal. Each company gets a branded public website and a dashboard to manage services, materials, and client inquiries, all on one monthly subscription.",
+        pills: ["SaaS product", "Product designer", "Construction"],
+        meta: "PRODUCT DESIGNER · UI/UX · DESIGN SYSTEM · 2026",
+      }}
+      sections={[
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "ROLE & OWNERSHIP" },
+            { kind: "heading", text: "PRODUCT DESIGNER", size: "lg" },
+            {
+              kind: "text",
+              text: "Sole end-to-end execution: User Research, Competitive Audits, Persona Development, System Architecture, Interaction Design, Design Systems, High-Fidelity UI, Micro-interactions, and Usability Validation.",
+            },
+            {
+              kind: "meta",
+              rows: [
+                ["Industry", "Construction / Vertical SaaS"],
+                ["Platform", "Desktop (Web)"],
+                ["Category", "SaaS, Admin dashboard, website"],
+                ["Tools", "Figma, Stitch, Figma motion, Illustrator"],
+              ],
+            },
+            { kind: "custom", render: mobileBrandVisual },
+          ],
+        },
+        {
+          tone: "olive",
+          blocks: [
+            { kind: "eyebrow", text: "MAJOR PROBLEMS" },
+            {
+              kind: "text",
+              text: "Construction companies in Nepal win work through trust and speed, but their tools are built around phone calls and spreadsheets",
+              size: "lg",
+              bold: true,
+            },
+            {
+              kind: "list",
+              items: [
+                "Client inquiries arrive through calls, Facebook, and WhatsApp, and many are lost or answered late",
+                "Teams can’t see which quotes are pending, accepted, or completed",
+                "Many companies have no professional website to show services and past projects",
+                "Custom websites and booking systems are expensive and slow to build",
+              ],
+            },
+          ],
+        },
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "THE SOLUTION" },
+            {
+              kind: "quote",
+              text: "Five intentional features that make running a construction business feel organized, not overwhelming",
+            },
+            {
+              kind: "cards",
+              variant: "solution",
+              cards: [
+                {
+                  title: "Simple Setup",
+                  body: "Unlike enterprise tools that need training and onboarding calls, a company signs up, adds its details, and picks a plan in three steps, then lands in a working dashboard",
+                },
+                {
+                  title: "Clear Pipeline",
+                  body: "Unlike calls and chat apps where inquiries get buried, every request lands in one dashboard with a clear status: Pending, Accepted, Completed, or Canceled, with pending ones shown first.",
+                },
+                {
+                  title: "Modern Website",
+                  body: "Unlike tools that only manage projects, each company also gets a public website built from its own services, materials, and past projects, so it looks credible without a developer",
+                },
+                {
+                  title: "Role-Based Access",
+                  body: "Unlike shared logins and spreadsheets, admins, estimators, and site managers each get the right level of access, and new members can be invited in a few clicks",
+                },
+                {
+                  title: "Transparent Pricing",
+                  body: "Unlike software with hidden costs, three simple plans, live usage meters, and clear invoices show exactly what a company uses and pays for",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "night",
+          blocks: [
+            { kind: "eyebrow", text: "BACKGROUND" },
+            { kind: "heading", text: "From a Company Website to a Product Companies Can Run On", size: "lg" },
+            {
+              kind: "text",
+              text: "My first idea for Arkiva was simple: a clean website and admin panel where a construction company could list its services and receive client inquiries in one place",
+            },
+            {
+              kind: "text",
+              text: "But a construction business doesn’t run on a website alone. Inquiries arrive through calls, Facebook, and WhatsApp, quotes get lost, and no one can see what is pending, accepted, or completed",
+            },
+            {
+              kind: "text",
+              text: "That changed my focus. Instead of only designing a site that looks good, I started designing a system that removes confusion at every step, and turned it into a platform any construction company can subscribe to",
+            },
+            {
+              kind: "quote",
+              text: "How might we help a small construction company stop losing inquiries and look professional online, without hiring a developer?",
+            },
+          ],
+        },
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "ANALYSIS AND ITS OUTCOME" },
+            { kind: "heading", text: "Competitive Analysis: Understanding the Construction Software Landscape", size: "lg" },
+            {
+              kind: "text",
+              text: "I reviewed Procore, Buildertrend, and JobTread to see what they do well, where small contractors are still left behind, and where Arkiva could offer a simpler, more affordable way to work.",
+              uppercase: true,
+            },
+            {
+              kind: "cards",
+              variant: "swot",
+              cards: [
+                {
+                  title: "STRENGTH",
+                  body: "Website and pipeline in one product. Each company gets a branded site and a booking dashboard together, so inquiries flow straight into one clear list. Simple and quick to start. A three-step setup and a focused set of pages mean a small team can start working without training",
+                },
+                {
+                  title: "WEAKNESS",
+                  body: "Narrow feature set. Arkiva doesn’t yet cover scheduling, document storage, or site reports, so larger firms may find it limited. New product trust. Without a track record or reviews, companies need extra reassurance before moving their client data to a new platform",
+                },
+                {
+                  title: "OPPORTUNITIES",
+                  body: "Local focus. Global tools are priced and built for larger firms, so a simple, affordable platform for Nepali contractors can win trust quickly. Fix the missed-inquiry moment. Notifications, reminders, and pending alerts can save leads that calls and chat apps lose",
+                },
+                {
+                  title: "THREATS",
+                  body: "Established platforms. Procore and Buildertrend have strong brands and could launch simpler plans for small companies. Free habits are hard to replace. WhatsApp, Facebook, and Excel are already familiar, so Arkiva must feel clearly easier to earn the switch",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "sand",
+          blocks: [
+            { kind: "eyebrow", text: "USER PERSONA" },
+            { kind: "heading", text: "Beyond the Photos, Defining Owner Needs", size: "lg" },
+            {
+              kind: "text",
+              text: "For Arkiva, I looked past individual features to understand what construction companies actually need: answering every inquiry on time, seeing what is pending, looking professional online, and keeping the team on the same page.",
+              uppercase: true,
+            },
+            {
+              kind: "text",
+              text: "[Fictional Character] — a user persona is a research-based, semi-fictional profile of a typical user, including his habits, goals and frustrations. It helps align design decisions with real needs instead of assumptions.",
+              size: "sm",
+            },
+            {
+              kind: "image",
+              src: "/images/works/case-arkiva/persona.png",
+              alt: "Ramesh KC, construction company owner",
+              maxWidth: 280,
+            },
+            { kind: "custom", render: mobilePersonaBio },
+          ],
+        },
+        {
+          tone: "night",
+          blocks: [
+            { kind: "heading", text: "IDEATION/USERFLOW", size: "lg" },
+            {
+              kind: "text",
+              text: "I mapped how a company moves from signing up to running its inquiries, services, team and billing from one dashboard.",
+              uppercase: true,
+            },
+            {
+              kind: "image",
+              src: "/images/works/case-arkiva/tablet.png",
+              alt: "Arkiva dashboard on a tablet",
+              contain: true,
+            },
+            {
+              kind: "image",
+              src: "/images/works/case-arkiva/flow.png",
+              alt: "Arkiva onboarding and dashboard user flow",
+              contain: true,
+            },
+          ],
+        },
+        {
+          tone: "white",
+          blocks: [
+            { kind: "heading", text: "HIFI WIREFRAMES", size: "lg" },
+            { kind: "custom", render: mobileWireGrid },
+          ],
+        },
+        {
+          tone: "olive",
+          blocks: [
+            { kind: "heading", text: "TESTING AND ITERATION", size: "lg" },
+            {
+              kind: "text",
+              text: "I walked through the key company flows and refined the interface based on usability and accessibility issues, focusing on clearer inquiry status, consistent components, and a smoother path from signing up to a working dashboard.",
+              uppercase: true,
+            },
+            {
+              kind: "text",
+              text: "Through testing and iteration, I improved Arkiva by finding places where a company owner could feel lost or slowed down. I simplified the dashboard so pending inquiries come first, rebuilt the cards and tables from one design system, raised text contrast to meet accessibility standards, and shortened onboarding to three steps, so setting up, tracking inquiries, and managing the team feel easy and clear",
+              uppercase: true,
+            },
+            {
+              kind: "list",
+              items: [
+                "Dashboard: replaced the large banner with a compact header, and moved pending inquiries to the first card",
+                "Data: fixed mismatched booking numbers so completed is never higher than total",
+                "Contrast: replaced low-contrast stat cards and gray text on dark surfaces with AA-compliant pairings",
+                "Components: swapped heavy shadows for flat, bordered cards, with one table and status badge style on every page",
+                "Onboarding: reduced setup to three steps with a visible step indicator",
+              ],
+            },
+          ],
+        },
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "FINAL THOUGHTS" },
+            {
+              kind: "text",
+              text: "The problem was never a lack of tools. It was everything standing between a construction company and an inquiry it can answer with confidence.",
+              size: "lg",
+            },
+            {
+              kind: "cards",
+              variant: "thought",
+              cards: [
+                {
+                  title: "WHAT I LEARNED",
+                  body: "A product is more than good-looking screens. Turning Arkiva from a single company site into a SaaS meant designing onboarding, roles, pricing, and billing too. Building the design system first kept every screen consistent.",
+                },
+                {
+                  title: "NEXT STEPS",
+                  body: "Arkiva is a concept, so the next phase is validation. I would test the sign-up flow and dashboard with real contractors and measure whether they respond to inquiries faster. Notifications and a mobile version would follow.",
+                },
+                {
+                  title: "I AM MOST PROUD OF?",
+                  body: "The way one system holds everything together. Every screen answers a real question an owner has, and ten-plus pages come from five templates, so the product stays calm, clear, and consistent.",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "black",
+          blocks: [
+            { kind: "heading", text: "LET’S CONNECT", size: "xl" },
+            { kind: "custom", render: <MailContactCard /> },
+          ],
+        },
+      ]}
+    />
+  );
+
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Arkiva full case study"
-      className="fixed inset-0 z-[70] bg-ink"
+      className="fixed inset-0 z-[70] overflow-y-auto bg-ink"
     >
+      {/* Mobile: vertical document. */}
+      <div className="md:hidden">{mobileDoc}</div>
+
+      {/* Desktop: scaled horizontal frame. */}
+      <div className="hidden h-full md:block">
       <div
         ref={scrollerRef}
         className="flex h-full w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -661,6 +1002,7 @@ export function ArkivaCaseStudy({ open, onClose }: { open: boolean; onClose: () 
             </section>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

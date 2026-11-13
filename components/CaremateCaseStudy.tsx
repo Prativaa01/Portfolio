@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
 import { useStudy } from "./StudyContext";
 import { MailContactCard } from "./MailContactCard";
+import { StudyMobileDoc } from "./mobile/StudyMobile";
 
 /**
  * Full CareMate case study from the live "CASE STUDY OF CAREMATE" frame
@@ -362,13 +363,389 @@ export function CaremateCaseStudy({ open, onClose }: { open: boolean; onClose: (
   const connFont = Math.min(192.941, (connW - 160) / 7.6);
   const frameWidth = pConn + connW;
 
+  /* ── Mobile document ───────────────────────────────────────────────────
+     Same copy and section order as the horizontal frame, restacked
+     vertically for below-768px viewports. */
+
+  const mobileVisual = (
+    <div
+      className="relative w-full overflow-hidden px-5 py-10"
+      style={{
+        background:
+          "linear-gradient(to bottom, #5a81fa 21.154%, #cedeff 99.99%, #f1f5f9)",
+      }}
+    >
+      <p className="text-center font-display font-semibold text-white" style={{ fontSize: 56, lineHeight: "normal" }}>
+        CareMate
+      </p>
+      <p className="mt-1 text-center font-outfit text-[13px] text-white/90">
+        Healthcare
+      </p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/works/caremate-home.png"
+        alt="CareMate home screen"
+        className="mx-auto mt-8 block h-auto w-[46%] max-w-[210px]"
+        loading="lazy"
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/works/caremate-splash.png"
+        alt="CareMate splash screen"
+        className="mx-auto mt-6 block h-auto w-[74%] max-w-[340px]"
+        loading="lazy"
+      />
+      <p className="mt-6 text-center font-outfit text-[11px] leading-[1.4] text-[#696e82]">
+        {"Healthcare app \nthat everyone\nneeds"}
+      </p>
+    </div>
+  );
+
+  const mobilePersonaBio = (
+    <div
+      className="w-full border px-5 py-5"
+      style={{ borderColor: "rgba(86,84,72,0.4)", backgroundColor: "rgba(255,250,244,0.55)" }}
+    >
+      <p className="font-ruda text-[15px] font-bold text-[#0E0E0A]">LIA HETIC</p>
+      <p className="font-ruda text-[14px] text-[#565448]">32 Years, Working Professional &amp; Caregiver</p>
+      <p className="mt-3 font-ruda text-[14px] leading-[1.65] text-[#565448]">
+        Priya juggles a demanding job with caring for her aging parents, leaving little time to navigate
+        hospital queues or spotty network coverage on the go. She relies on quick AI-guided symptom checks,
+        easy doctor booking, and instant teleconsults to manage care for her family, and needs the app to
+        work reliably even with poor connectivity, with fast access to emergency help when something urgent
+        comes up.
+      </p>
+    </div>
+  );
+
+  const mobileWirePortraits = (
+    <div className="grid grid-cols-3 gap-2">
+      {[
+        "/images/works/case/homepage.png",
+        "/images/works/case/ai-assistant.png",
+        "/images/works/case/home-screen.png",
+        "/images/works/case/splash6.png",
+        "/images/works/case/splash7.png",
+        "/images/works/case/login.png",
+      ].map((src) => (
+        <div key={src} className="overflow-hidden bg-[#565448]/5" style={{ aspectRatio: "53 / 100" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt="App wireframe screen" className="block h-full w-full object-cover" loading="lazy" />
+        </div>
+      ))}
+    </div>
+  );
+
+  const mobileWireFrames1 = (
+    <div className="flex w-full flex-col gap-3">
+      {["/images/works/case/mock-r1a.png", "/images/works/case/mock-r1b.png", "/images/works/case/mock-r1c.png"].map((src) => (
+        <div key={src} className="w-full overflow-hidden bg-[#565448]/5" style={{ aspectRatio: "297.462 / 202.917" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt="App screen in phone frame" className="block h-full w-full object-cover" loading="lazy" />
+        </div>
+      ))}
+    </div>
+  );
+
+  const mobileWireFrames2 = (
+    <div className="grid grid-cols-2 gap-3">
+      {["/images/works/case/mock-r2a.png", "/images/works/case/mock-r2b.png", "/images/works/case/mock-r2c.png", "/images/works/case/mock-r2d.png"].map((src) => (
+        <div key={src} className="overflow-hidden bg-[#565448]/5" style={{ aspectRatio: "425.224 / 290.071" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt="App screen in phone frame" className="block h-full w-full object-cover" loading="lazy" />
+        </div>
+      ))}
+    </div>
+  );
+
+  const mobileDoc = (
+    <StudyMobileDoc
+      title={
+        <>
+          CAREMATE:{" "}
+          <span className="text-sand">HEALTHCARE THAT MEETS YOU WHERE YOU ARE</span>
+        </>
+      }
+      onBack={backToOverview}
+      chromeTone="night"
+      ariaLabel="CareMate full case study"
+      intro={{
+        text: "A digital health platform engineered to bridge the critical gap between feeling unwell and receiving verified clinical care. Helping people understand symptoms, schedule vetted doctors, consult remotely, and access emergency help—even in constrained network environments.",
+        pills: ["Online consultation", "Product designer", "Digital health", "Mobile app"],
+        meta: "MOBILE APP · HEALTHCARE · 2026",
+      }}
+      sections={[
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "ROLE & OWNERSHIP" },
+            { kind: "heading", text: "PRODUCT DESIGNER", size: "lg" },
+            {
+              kind: "text",
+              text: "Sole end-to-end execution: User Research, Competitive Audits, Persona Development, System Architecture, Interaction Design, Design Systems, High-Fidelity UI, Micro-interactions, and Usability Validation.",
+            },
+            {
+              kind: "meta",
+              rows: [
+                ["Industry", "Healthcare Services"],
+                ["Platform", "iOS & Android (Flutter Engine)"],
+                ["Category", "AI Telehealth & Triage"],
+                ["Timeline", "Q1 2026 (Concept & Systems)"],
+              ],
+            },
+            { kind: "custom", render: mobileVisual },
+          ],
+        },
+        {
+          tone: "olive",
+          blocks: [
+            { kind: "eyebrow", text: "MAJOR PROBLEMS" },
+            {
+              kind: "text",
+              text: "People struggle to quickly identify the right doctor, understand the urgency of their symptoms, and book timely healthcare appointments, leading to delayed treatment and inefficient use of medical services.",
+              size: "lg",
+              bold: true,
+            },
+            {
+              kind: "stats",
+              stats: [
+                { value: "50%", label: "Patients schedule and don't even show up." },
+                { value: "73%", label: "Patients see the wrong specialist first" },
+                { value: "4.2 days", label: "Average wait for an appointment" },
+                { value: "60%", label: "ER visits are non emergency cases" },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "THE SOLUTION" },
+            {
+              kind: "quote",
+              text: "“Five intentional features that treat the doctor appointment ghosting problem and daily health management as one connected ecosystem.”",
+            },
+            {
+              kind: "cards",
+              variant: "solution",
+              cards: [
+                {
+                  title: "Anti-ghosting rules",
+                  body: "Unlike other existing apps ai voice feature will be used to fill up symptoms and entire case of a appointment, which can be edited manually too.",
+                },
+                {
+                  title: "AI Broadcast",
+                  body: "According to the users location any major outbreak or anything health related will be broadcasted & notified according to location.",
+                },
+                {
+                  title: "AI navigation",
+                  body: "Unlike other existing apps ai voice feature will be used to fill up symptoms and entire case of a appointment, which can be edited manually too.",
+                },
+                {
+                  title: "Rescheduling",
+                  body: "Manual rescheduling takes away doctors important time which will be managed by AI entirely.",
+                },
+                {
+                  title: "Offline Mode",
+                  body: "Unlike other existing apps offline mode will be available along with low network mode.",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "night",
+          blocks: [
+            { kind: "eyebrow", text: "BACKGROUND" },
+            { kind: "heading", text: "From Doctor Booking to Accessible Healthcare", size: "lg" },
+            {
+              kind: "text",
+              text: "I initially designed caremate to make finding a doctor and booking appointments easier, with online consultations and prescriptions in one place.",
+            },
+            {
+              kind: "text",
+              text: "But healthcare needs don’t always happen during a planned appointment. Users may need quick guidance, access to prescriptions, or emergency support at unexpected moments.",
+            },
+            {
+              kind: "text",
+              text: "That shifted my focus from simply booking care to creating a more accessible healthcare experience.",
+            },
+            {
+              kind: "quote",
+              text: "How might we make essential healthcare support available when people need it—not just when they have an appointment?",
+            },
+            {
+              kind: "text",
+              text: "This became the foundation for Kearmaid’s consultation, AI assistance, prescription, and emergency support features.",
+            },
+          ],
+        },
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "ANALYSIS AND ITS OUTCOME" },
+            { kind: "heading", text: "Competitive Analysis: Understanding the Healthcare Landscape", size: "lg" },
+            {
+              kind: "text",
+              text: "I looked at existing healthcare platforms to understand what they offer well, where gaps remain, and where Kearmaid could create a more connected experience",
+              uppercase: true,
+            },
+            {
+              kind: "image",
+              src: "/images/works/case/competitive-table.svg",
+              alt: "Competitive analysis chart",
+              contain: true,
+            },
+            {
+              kind: "cards",
+              variant: "swot",
+              cards: [
+                {
+                  title: "STRENGTH",
+                  body: "End-to-end healthcare journey — connects doctor discovery, consultation, prescriptions, and emergency support. Multiple access points — combines online care, AI symptom guidance, and offline appointment access.",
+                },
+                {
+                  title: "WEAKNESS",
+                  body: "Broad feature set can make the experience harder to navigate. Trust-dependent experience requires users to feel confident in AI guidance and digital healthcare.",
+                },
+                {
+                  title: "OPPORTUNITIES",
+                  body: "Personalized healthcare guidance through AI-assisted symptom discovery and recommendations. One connected healthcare experience instead of users switching between separate services.",
+                },
+                {
+                  title: "THREATS",
+                  body: "Established competitors already have strong doctor networks and user trust. Rapidly evolving health-tech platforms can quickly introduce similar AI and emergency features.",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "sand",
+          blocks: [
+            { kind: "eyebrow", text: "USER PERSONA" },
+            { kind: "heading", text: "Beyond the Algorithm, Defining User Needs", size: "lg" },
+            {
+              kind: "text",
+              text: "For Caremate, I focused beyond individual features to understand what users actually need: finding the right care, understanding symptoms, accessing consultations and prescriptions, and getting timely help when it matters most.",
+              uppercase: true,
+            },
+            {
+              kind: "text",
+              text: "[Fictional Character] — a user persona is a research-based, semi-fictional profile of your target user, including their demographics, goals, and pain points, used to align design and product decisions around real user needs instead of assumptions.",
+              size: "sm",
+            },
+            { kind: "image", src: "/images/works/case/lia-hetic.png", alt: "Persona portrait", maxWidth: 280 },
+            { kind: "custom", render: mobilePersonaBio },
+          ],
+        },
+        {
+          tone: "night",
+          blocks: [
+            { kind: "heading", text: "IDEATION/USERFLOW", size: "lg" },
+            {
+              kind: "text",
+              text: "I explored ideas to make Caremate a simpler, more connected healthcare experience—from finding care to getting guidance and support",
+              uppercase: true,
+            },
+            {
+              kind: "image",
+              src: "/images/works/case/splash7-landscape.png",
+              alt: "Splash screen landscape",
+              contain: true,
+            },
+            {
+              kind: "flow",
+              groups: [
+                { pill: "Onboarding" },
+                { pill: "Sign In / OTP" },
+                { pill: "Appointments", subs: ["Doctor search & filter", "Slot, booking & pay"] },
+                { pill: "AI assistant", subs: ["Symptom check input", "AI clinical triage", "Direct care recommendation"] },
+                { pill: "Care & Consult", subs: ["Live teleconsult session", "Digital pescription"] },
+                { pill: "SOS & Emergency", subs: ["One tap dispatch & telemetry", "Family alert & care protocol"] },
+                { pill: "Offline & sync", subs: ["Local, cache & reconnect", "Network detection"] },
+                { pill: "Home Navigation" },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "white",
+          blocks: [
+            { kind: "heading", text: "HIFI WIREFRAMES", size: "lg" },
+            { kind: "custom", render: mobileWirePortraits },
+            { kind: "custom", render: mobileWireFrames1 },
+            { kind: "custom", render: mobileWireFrames2 },
+          ],
+        },
+        {
+          tone: "olive",
+          blocks: [
+            { kind: "heading", text: "TESTING AND ITERATION", size: "lg" },
+            {
+              kind: "text",
+              text: "I tested the key flows and refined the interface based on usability issues, focusing on clearer navigation, simpler interactions, and a smoother healthcare journey",
+              uppercase: true,
+            },
+            {
+              kind: "text",
+              text: "Through testing and iterations, I refined Caremate by identifying areas where users could get confused or slowed down. I adjusted the navigation, simplified key interactions, and improved the overall flow to make finding care, booking consultations, and accessing support feel more intuitive and seamless",
+              uppercase: true,
+            },
+          ],
+        },
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "FINAL THOUGHTS" },
+            {
+              kind: "text",
+              text: "The problem was never the lack of doctors. It was everything standing between feeling unwell and reaching the right one",
+              size: "lg",
+            },
+            {
+              kind: "cards",
+              variant: "thought",
+              cards: [
+                {
+                  title: "WHAT I LEARNED",
+                  body: "Healthcare design is design for uncertainty. People struggle to know which doctor to see and how urgent symptoms are. So I put AI triage before booking, made entry voice-first, and made it work on weak networks.",
+                },
+                {
+                  title: "NEXT STEPS",
+                  body: "CareMate is a concept, so next is validation. I would test AI triage and SOS with patients and caregivers, test offline mode, and measure if anti-ghosting rules reduce no-shows.",
+                },
+                {
+                  title: "I AM MOST PROUD OF?",
+                  body: "The balance between automation and control. AI fills in symptoms and details, but everything stays editable. With SOS one gesture away, the app feels supportive everyday and urgent.",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "black",
+          blocks: [
+            { kind: "heading", text: "LET’S CONNECT", size: "xl" },
+            { kind: "custom", render: <MailContactCard /> },
+          ],
+        },
+      ]}
+    />
+  );
+
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-label="CareMate full case study"
-      className="fixed inset-0 z-[70] bg-night"
+      className="fixed inset-0 z-[70] overflow-y-auto bg-night"
     >
+      {/* Mobile: vertical document. */}
+      <div className="md:hidden">{mobileDoc}</div>
+
+      {/* Desktop: scaled horizontal frame. */}
+      <div className="hidden h-full md:block">
       <div
         ref={scrollerRef}
         className="flex h-full w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -1067,6 +1444,7 @@ export function CaremateCaseStudy({ open, onClose }: { open: boolean; onClose: (
             </section>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

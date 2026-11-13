@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { COPY } from "@/lib/content";
 import { useStudy } from "./StudyContext";
 import { MailContactCard } from "./MailContactCard";
+import { StudyMobileDoc } from "./mobile/StudyMobile";
 
 /**
  * Full Aeva case study from the live "CASE STUDY OF AEVA" frame
@@ -186,13 +187,338 @@ export function AevaCaseStudy({ open, onClose }: { open: boolean; onClose: () =>
   const connFont = Math.min(192.941, (connW - 160) / 7.6);
   const frameWidth = pConn + connW;
 
+  /* ── Mobile document ───────────────────────────────────────────────────
+     Same copy and section order as the horizontal frame, restacked
+     vertically for below-768px viewports. */
+
+  const mobilePersonaBio = (
+    <div
+      className="w-full border px-5 py-5"
+      style={{ borderColor: "rgba(86,84,72,0.4)", backgroundColor: "rgba(255,250,244,0.55)" }}
+    >
+      <p className="font-ruda text-[15px] font-bold text-[#0E0E0A]">SIYA SHARMA</p>
+      <p className="font-ruda text-[14px] text-[#565448]">26 Years, Marketing Executive</p>
+      <p className="mt-3 font-ruda text-[14px] leading-[1.65] text-[#565448]">
+        Mira loves trying new beauty products but shops mostly on her phone during short breaks. She has
+        been let down before by shades that looked different on her skin and glosses that felt sticky.
+        She wants to see products on skin tones like hers, know how a gloss feels before buying, and get
+        quick answers about things like leaking and ingredients. When her favorite shade is sold out, she
+        wants a close alternative or a restock alert, not a dead end.
+      </p>
+    </div>
+  );
+
+  const mobileWireRow1 = (
+    <div className="flex w-full flex-col gap-3">
+      {[
+        ["/images/works/case-aeva/wire-r1a.png", "Product page with shade selector"],
+        ["/images/works/case-aeva/wire-r1b.png", "Shopping bag page"],
+        ["/images/works/case-aeva/wire-r1c.png", "Sold-out restock page"],
+      ].map(([src, alt]) => (
+        <div key={src as string} className="w-full overflow-hidden bg-[#565448]/5" style={{ aspectRatio: "325 / 244" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src as string} alt={alt as string} className="block h-full w-full object-cover" loading="lazy" />
+        </div>
+      ))}
+    </div>
+  );
+
+  const mobileWireRow2 = (
+    <div className="grid grid-cols-2 gap-3">
+      {[
+        ["/images/works/case-aeva/wire-r2a.png", "Shade finder page"],
+        ["/images/works/case-aeva/wire-r2b.png", "Brand story page"],
+        ["/images/works/case-aeva/wire-r2c.png", "Reviews page"],
+        ["/images/works/case-aeva/wire-r2d.png", "Principles page"],
+      ].map(([src, alt]) => (
+        <div key={src as string} className="overflow-hidden bg-[#565448]/5" style={{ aspectRatio: "325 / 244" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src as string} alt={alt as string} className="block h-full w-full object-cover" loading="lazy" />
+        </div>
+      ))}
+    </div>
+  );
+
+  const mobileDoc = (
+    <StudyMobileDoc
+      title="AEVA"
+      onBack={backToOverview}
+      chromeTone="cream"
+      ariaLabel="Aeva full case study"
+      intro={{
+        text: "AEVA is a lip gloss brand designed to celebrate self-expression through color, shine, and confidence. With glossy finishes and versatile shades, AEVA brings a fresh, playful approach to beauty, making every lip look a little more you.",
+        pills: ["E commerce", "Product designer", "Beauty and gloss", "Desktop"],
+        meta: "E COMMERCE · BEAUTY · 2026",
+      }}
+      sections={[
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "ROLE & OWNERSHIP" },
+            { kind: "heading", text: "PRODUCT DESIGNER", size: "lg" },
+            {
+              kind: "text",
+              text: "Sole end-to-end execution: User Research, Competitive Audits, Persona Development, System Architecture, Interaction Design, Design Systems, High-Fidelity UI, Micro-interactions, and Usability Validation.",
+            },
+            {
+              kind: "meta",
+              rows: [
+                ["Industry", "E commerce"],
+                ["Platform", "Desktop"],
+                ["Category", "Beauty and gloss"],
+                ["Tools", "Figma, Figma motion, Nano-banana"],
+              ],
+            },
+            {
+              kind: "image",
+              src: "/images/works/case-aeva/visual-aeva2.png",
+              alt: "Aeva campaign visual",
+            },
+          ],
+        },
+        {
+          tone: "olive",
+          blocks: [
+            { kind: "eyebrow", text: "MAJOR PROBLEMS" },
+            {
+              kind: "text",
+              text: "Shoppers struggle to judge a lip gloss online. They can’t tell if a shade suits their skin, how it feels, or what to do when it’s sold out, leading to doubt, abandoned carts and returns.",
+              size: "lg",
+              bold: true,
+            },
+            {
+              kind: "list",
+              items: [
+                "Shoppers can’t compare shades side by side, so they guess.",
+                "Reviews rarely come from people with similar skin or lips.",
+                "Gloss feel (sticky, light, cushiony) is described in vague words like “comfortable.”",
+                "A first purchase from a new brand feels risky, with no easy way to try it.",
+                "Basic questions like “will it leak in my bag?” are answered only in forums.",
+              ],
+            },
+          ],
+        },
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "THE SOLUTION" },
+            {
+              kind: "quote",
+              text: "“Five intentional features that treat shade doubt and online shopping confidence as one connected experience.”",
+            },
+            {
+              kind: "cards",
+              variant: "solution",
+              cards: [
+                {
+                  title: "Skin Tone Swatches",
+                  body: "Unlike other existing beauty sites that show one model, every shade is shown on many skin and lip tones, and the photos update when a shopper picks their tone",
+                },
+                {
+                  title: "Feel Scale",
+                  body: "Unlike other existing sites where feel is hidden in reviews, three simple bars show shine, comfort and stickiness right on the product page",
+                },
+                {
+                  title: "Before You Buy",
+                  body: "Basic questions like leaking, shelf life, ingredients and scent are answered upfront on every product, so shoppers don’t have to search forums",
+                },
+                {
+                  title: "Sold-Out Recovery",
+                  body: "Unlike other existing sites that stop at “Out of stock,” shoppers can get a restock alert or see the closest shade in stock, with a reason",
+                },
+                {
+                  title: "Mini Set Trusted Cart",
+                  body: "A small discovery set and a clear cart with delivery, returns and secure payment info make a first purchase from a new brand feel low risk",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "night",
+          blocks: [
+            { kind: "eyebrow", text: "BACKGROUND" },
+            { kind: "heading", text: "From Beautiful Photos to Confident Choices", size: "lg" },
+            {
+              kind: "text",
+              text: "My first idea for AEVA was simple: a clean online shop where people could browse and buy lip gloss in one place",
+            },
+            {
+              kind: "text",
+              text: "But buying beauty online is not like buying other products. Shoppers can’t test a shade, feel the texture, or know if it will suit their skin before they pay",
+            },
+            {
+              kind: "text",
+              text: "That changed my focus. Instead of only designing a store that looks good, I started designing one that removes doubt at every step",
+            },
+            {
+              kind: "quote",
+              text: "How might we help shoppers feel sure about a lip gloss before it ever reaches their hands?",
+            },
+            {
+              kind: "text",
+              text: "This became the foundation for AEVA’s skin tone swatches, feel scale, sold-out recovery, and trusted cart features",
+            },
+          ],
+        },
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "ANALYSIS AND ITS OUTCOME" },
+            { kind: "heading", text: "Competitive Analysis: Understanding the Beauty Shopping Landscape", size: "lg" },
+            {
+              kind: "text",
+              text: "I reviewed leading beauty and lip gloss brands to see what they do well, where shoppers are still left guessing, and where AEVA could build a more confident buying experience",
+              uppercase: true,
+            },
+            {
+              kind: "image",
+              src: "/images/works/case-aeva/competitive-table.svg",
+              alt: "Competitive analysis chart",
+              contain: true,
+            },
+            {
+              kind: "cards",
+              variant: "swot",
+              cards: [
+                {
+                  title: "STRENGTH",
+                  body: "Shade confidence built into the page. Skin tone swatches and a feel scale answer the biggest doubts before checkout. Focused and simple. A small, clear range means shoppers choose faster instead of feeling overwhelmed",
+                },
+                {
+                  title: "WEAKNESS",
+                  body: "Small product range. Fewer shades and products may limit choice for some shoppers. New brand trust. Without a big reputation or reviews yet, shoppers need extra reassurance before a first purchase",
+                },
+                {
+                  title: "OPPORTUNITIES",
+                  body: "Shoppers want shade help. Many beauty sites still show one model and hide how a gloss feels, so there is room to do it better. Fix the sold-out moment. Restock alerts and closest-shade suggestions can save sales that other sites lose",
+                },
+                {
+                  title: "THREATS",
+                  body: "Established brands. Big names already have loyal customers and strong social media reach. Fast-moving trends. Competitors can quickly add try-on tools or similar features once they see them working",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "sand",
+          blocks: [
+            { kind: "eyebrow", text: "USER PERSONA" },
+            { kind: "heading", text: "Beyond the Photos, Defining Shopper Needs", size: "lg" },
+            {
+              kind: "text",
+              text: "For AEVA, I looked past individual features to understand what shoppers actually need: choosing a shade that suits them, knowing how a gloss feels, trusting a new brand, and not losing a favorite to “out of stock.”",
+              uppercase: true,
+            },
+            {
+              kind: "text",
+              text: "[Fictional Character] — a user persona is a research-based, semi-fictional profile of a typical shopper, including her habits, goals and frustrations. It helps align design decisions with real needs instead of assumptions",
+              size: "sm",
+            },
+            { kind: "image", src: "/images/works/case-aeva/persona.png", alt: "Persona portrait", maxWidth: 280 },
+            { kind: "custom", render: mobilePersonaBio },
+          ],
+        },
+        {
+          tone: "night",
+          blocks: [
+            { kind: "heading", text: "IDEATION/USERFLOW", size: "lg" },
+            {
+              kind: "text",
+              text: "I explored ideas to make AEVA a simpler, more confident beauty shopping experience—from shade discovery to checkout",
+              uppercase: true,
+            },
+            {
+              kind: "image",
+              src: "/images/works/case-aeva/idea-laptop.png",
+              alt: "Aeva concept mockup",
+              contain: true,
+            },
+            {
+              kind: "image",
+              src: "/images/works/case-aeva/idea-flow.png",
+              alt: "Aeva user flow",
+              contain: true,
+            },
+          ],
+        },
+        {
+          tone: "white",
+          blocks: [
+            { kind: "heading", text: "HIFI WIREFRAMES", size: "lg" },
+            { kind: "custom", render: mobileWireRow1 },
+            { kind: "custom", render: mobileWireRow2 },
+          ],
+        },
+        {
+          tone: "olive",
+          blocks: [
+            { kind: "heading", text: "TESTING AND ITERATION", size: "lg" },
+            {
+              kind: "text",
+              text: "I walked through the key shopping flows and refined the interface based on usability issues, focusing on clearer shade selection, simpler interactions, and a smoother path from browsing to checkout",
+              uppercase: true,
+            },
+            {
+              kind: "text",
+              text: "Through testing and iteration, I improved AEVA by finding places where shoppers could feel unsure or slowed down. I adjusted the product page layout, simplified how shades and skin tones are chosen, and tightened the cart so that choosing a gloss, getting answers, and buying feel easy and confident",
+              uppercase: true,
+            },
+          ],
+        },
+        {
+          tone: "cream",
+          blocks: [
+            { kind: "eyebrow", text: "FINAL THOUGHTS" },
+            {
+              kind: "text",
+              text: "The problem was never a lack of lip gloss. It was everything standing between a shopper and a shade she feels sure about",
+              size: "lg",
+            },
+            {
+              kind: "cards",
+              variant: "thought",
+              cards: [
+                {
+                  title: "WHAT I LEARNED",
+                  body: "Beauty e-commerce is design for doubt. Shoppers can't test a shade or feel the texture. So I put skin tone swatches and a feel scale on the page, answered questions upfront, and gave sold-out shades a next step.",
+                },
+                {
+                  title: "NEXT STEPS",
+                  body: "AEVA is a concept, so next is validation. I would test the product page with real shoppers, check if the skin tone selector and feel scale help, and measure if restock alerts save sales.",
+                },
+                {
+                  title: "I AM MOST PROUD OF?",
+                  body: "Small details remove big doubts. Every feature answers one real shopper question, from will it suit me to what if it's sold out. Calm and premium, yet quietly confident.",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tone: "black",
+          blocks: [
+            { kind: "heading", text: "LET’S CONNECT", size: "xl" },
+            { kind: "custom", render: <MailContactCard /> },
+          ],
+        },
+      ]}
+    />
+  );
+
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Aeva full case study"
-      className="fixed inset-0 z-[70] bg-night"
+      className="fixed inset-0 z-[70] overflow-y-auto bg-night"
     >
+      {/* Mobile: vertical document. */}
+      <div className="md:hidden">{mobileDoc}</div>
+
+      {/* Desktop: scaled horizontal frame. */}
+      <div className="hidden h-full md:block">
       <div
         ref={scrollerRef}
         className="flex h-full w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -716,6 +1042,7 @@ export function AevaCaseStudy({ open, onClose }: { open: boolean; onClose: () =>
             </section>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

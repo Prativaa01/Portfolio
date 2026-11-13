@@ -33,7 +33,7 @@ export function MailContactCard() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-[420px] rounded-xl border border-[#565448]/80 bg-[#161712]/95 p-6 text-cream shadow-2xl backdrop-blur-xl"
+      className="w-full max-w-[420px] rounded-xl border border-[#565448]/80 bg-[#161712]/95 p-6 text-cream shadow-2xl backdrop-blur-xl"
       style={{
         boxShadow:
           "0 20px 40px -15px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)",

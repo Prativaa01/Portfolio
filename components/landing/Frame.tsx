@@ -9,6 +9,10 @@ import {
   type ReactNode,
 } from "react";
 import { HOME, PANEL_WIDTHS } from "@/lib/home";
+import { MobileHome } from "./MobileHome";
+
+/** Breakpoint shared with Tailwind's `md:` — the mobile/desktop switch. */
+export const DESKTOP_QUERY = "(min-width: 768px)";
 
 const HERO_WIDTH = PANEL_WIDTHS[0];
 
@@ -72,6 +76,9 @@ export function Frame({ children }: { children: ReactNode }) {
     const el = scrollerRef.current;
     if (!el) return;
     const onWheel = (event: WheelEvent) => {
+      // The desktop frame only owns the wheel while it is actually laid
+      // out; on narrow windows the mobile layout handles page scroll.
+      if (!window.matchMedia(DESKTOP_QUERY).matches) return;
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       event.preventDefault();
       const delta =
@@ -96,6 +103,7 @@ export function Frame({ children }: { children: ReactNode }) {
       // Don't intercept if an input or textarea is active
       const tag = (event.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (!window.matchMedia(DESKTOP_QUERY).matches) return;
 
       if (event.key === "ArrowRight" || event.key === "PageDown") {
         el.scrollBy({ left: window.innerWidth * 0.75, behavior: "smooth" });
@@ -116,10 +124,15 @@ export function Frame({ children }: { children: ReactNode }) {
 
   return (
     <FrameContext.Provider value={{ scale, heroFill }}>
+      {/* Mobile: stacked vertical sections (see MobileHome). */}
+      <div className="md:hidden">
+        <MobileHome />
+      </div>
+      {/* Desktop: the scaled horizontal design frame. */}
       <div
         ref={scrollerRef}
         data-frame-scroller
-        className="flex h-screen w-full items-center overflow-x-auto overflow-y-hidden bg-night [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="hidden h-screen w-full items-center overflow-x-auto overflow-y-hidden bg-night md:flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <div
           className="relative shrink-0"

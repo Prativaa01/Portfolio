@@ -12,6 +12,10 @@ import { useContactModal } from "./ContactModal";
  * A 3134x770 design frame (1566 dark menu panel + 1568 cream all-work
  * panel) scaled to the viewport height, opened from the hamburger on the
  * myself page. Same scaler + wheel-to-horizontal pattern as `Frame`.
+ *
+ * Below 768px the same overlay renders as a vertical mobile layout:
+ * sticky close bar, stacked nav links and socials, then the ALL WORK
+ * cards stacked full-width.
  */
 
 const FRAME_WIDTH = 3134;
@@ -135,8 +139,13 @@ export function WorksMenu({
   const [scale, setScale] = useState(1);
   const [viewportWidth, setViewportWidth] = useState(0);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  // Mobile: the ALL WORK section, for the WORKS link to jump to.
+  const mobileWorksRef = useRef<HTMLDivElement>(null);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
   // Once the "View all work" entry has landed, leave the user's scroll alone.
   const startAtWorksDone = useRef(false);
+  // Mobile tracks its own landing separately from the desktop scroller.
+  const mobileStartAtWorksDone = useRef(false);
 
   useEffect(() => {
     if (!open) return;
@@ -184,12 +193,24 @@ export function WorksMenu({
     startAtWorksDone.current = true;
   }, [open, startAtWorks, scale, viewportWidth]);
 
+  // Mobile: land on ALL WORK when asked.
+  useEffect(() => {
+    if (!open) {
+      mobileStartAtWorksDone.current = false;
+      return;
+    }
+    if (!startAtWorks || mobileStartAtWorksDone.current) return;
+    mobileWorksRef.current?.scrollIntoView({ block: "start" });
+    mobileStartAtWorksDone.current = true;
+  }, [open, startAtWorks]);
+
   // Wheel maps to horizontal, same as the page frames.
   useEffect(() => {
     if (!open) return;
     const el = scrollerRef.current;
     if (!el) return;
     const onWheel = (event: WheelEvent) => {
+      if (!window.matchMedia("(min-width: 768px)").matches) return;
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       event.preventDefault();
       const isTrackpad = Math.abs(event.deltaY) < 50;
@@ -209,6 +230,17 @@ export function WorksMenu({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, inactive, onClose]);
 
+  // Lock page scroll while the overlay is open (the mobile layout is a
+  // document-flow overlay that scrolls itself).
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   if (!open) return null;
 
   // Extra night width so the menu panel covers the whole first screen —
@@ -224,6 +256,9 @@ export function WorksMenu({
   const scrollToWorks = () =>
     scrollerRef.current?.scrollTo({ left: worksX, behavior: "smooth" });
 
+  const mobileScrollToWorks = () =>
+    mobileWorksRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
   return (
     <div
       role="dialog"
@@ -231,171 +266,96 @@ export function WorksMenu({
       aria-label="Menu and all work"
       className="fixed inset-0 z-50 bg-night"
     >
-      <div
-        ref={scrollerRef}
-        className="flex h-full w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
+      {/* ── Mobile ─────────────────────────────────────────────────────── */}
+      <div ref={mobileScrollRef} className="h-full overflow-y-auto overscroll-contain md:hidden">
         <div
-          className="relative shrink-0"
-          style={{ width: totalWidth * scale, height: FRAME_HEIGHT * scale }}
+          className="sticky top-0 z-10 flex items-center justify-between border-b border-cream/25 bg-night/95 px-4 py-3 backdrop-blur-sm"
         >
-          <div
-            className="absolute left-0 top-0 flex"
-            style={{
-              width: totalWidth,
-              height: FRAME_HEIGHT,
-              transform: scale === 1 ? undefined : `scale(${scale})`,
-              transformOrigin: "top left",
-            }}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close menu"
+            className="flex size-9 cursor-pointer items-center justify-center"
           >
-            {/* Menu panel from `node 8066:550`, stretched by menuFill so the
-                night background covers the whole first screen. */}
-            <section
-              className="relative h-full shrink-0 bg-night text-cream"
-              style={{ width: MENU_PANEL_WIDTH + menuFill }}
-              aria-label="Menu"
+            <svg width="22" height="2" viewBox="0 0 29 1" fill="none" aria-hidden="true">
+              <path d="M28.5 0.5H0.5" stroke="#FFFAF4" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+          <span className="font-ruda text-[11px] uppercase tracking-[1.6px] text-cream/70">
+            {COPY.name}
+          </span>
+        </div>
+
+        {/* Nav */}
+        <nav aria-label="Site" className="flex flex-col items-start px-6 pt-10">
+          {[
+            { label: "HOME", href: "/", close: true },
+            { label: "ABOUT", href: "/about-me", close: true },
+          ].map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              onClick={item.close ? onClose : undefined}
+              className="py-2 font-display font-semibold uppercase leading-[1.1] text-[#565448] transition-colors duration-200 active:text-cream"
+              style={{ fontSize: "clamp(44px, 15vw, 64px)" }}
             >
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%)",
-                }}
-              />
+              {item.label}
+            </Link>
+          ))}
+          <button
+            type="button"
+            onClick={mobileScrollToWorks}
+            className="cursor-pointer py-2 text-left font-display font-semibold uppercase leading-[1.1] text-[#565448] transition-colors duration-200 active:text-cream"
+            style={{ fontSize: "clamp(44px, 15vw, 64px)" }}
+          >
+            WORKS
+          </button>
+        </nav>
 
-              {/* Sidebar: cream 0.25px border on night (`node 8066:551`). */}
-              <div className="absolute left-0 top-0 h-full w-[115px] border-[0.25px] border-cream">
-                {/* Menu-state glyph (`node 8066:557` "Vector"): a single 28px
-                    white dash where the hamburger was — closes the menu and
-                    returns to the landing page. */}
-                <Link
-                  href="/"
-                  onClick={onClose}
-                  aria-label="Close menu and go to home page"
-                  className="absolute flex cursor-pointer items-center justify-center"
-                  style={{ left: 48.5, top: 18.5, width: 48, height: 48 }}
-                >
-                  <svg width="29" height="1" viewBox="0 0 29 1" fill="none" aria-hidden="true">
-                    <path d="M28.5 0.5H0.5" stroke="white" strokeLinecap="round" />
-                  </svg>
-                </Link>
-                <div className="absolute left-0 top-[84px] h-px w-[115px] bg-cream" />
-
-                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                  <span className="vertical-rl-upright text-[32px] leading-8 tracking-[0.01em]">
-                    {COPY.name}
-                  </span>
-                </div>
-                <div className="pointer-events-none absolute bottom-[18px] left-0 flex w-full justify-center">
-                  <span className="vertical-rl-upright text-center text-[15px] leading-[15px]">
-                    {COPY.year}
-                  </span>
-                </div>
-              </div>
-
-              {/* Nav from `node 8066:558`. */}
-              <nav
-                className="absolute flex flex-col items-start"
-                style={{ left: 185, top: 44, gap: 29 }}
-                aria-label="Site"
-              >
-                <Link
-                  href="/"
-                  className="whitespace-nowrap leading-[1.185] text-[#565448] transition-colors duration-200 hover:text-cream"
-                  style={{ fontSize: NAV_FONT_SIZE }}
-                >
-                  HOME
-                </Link>
-                <Link
-                  href="/about-me"
-                  onClick={onClose}
-                  className="cursor-pointer whitespace-nowrap leading-[1.185] text-[#565448] transition-colors duration-200 hover:text-cream"
-                  style={{ fontSize: NAV_FONT_SIZE }}
-                >
-                  ABOUT
-                </Link>
+        {/* Socials */}
+        <div className="flex flex-wrap gap-x-4 gap-y-3 px-6 pb-12 pt-8">
+          {SOCIALS.map((s) => {
+            if (s.label === "MAIL" || s.label === "DISCORD") {
+              return (
                 <button
+                  key={s.label}
                   type="button"
-                  onClick={scrollToWorks}
-                  className="cursor-pointer whitespace-nowrap leading-[1.185] text-[#565448] transition-colors duration-200 hover:text-cream text-left"
-                  style={{ fontSize: NAV_FONT_SIZE }}
+                  onClick={() => openContactModal(s.label === "MAIL" ? "mail" : "discord")}
+                  className="cursor-pointer border-none bg-transparent p-0 text-left font-ruda text-[14px] leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
                 >
-                  WORKS
+                  {s.label}
                 </button>
-              </nav>
-
-              {/* CLOSE + socials column from `node 8066:562`. */}
-              <div
-                className="absolute flex flex-col items-end"
-                style={{ left: 1043, top: 90, width: 441, gap: 544 }}
+              );
+            }
+            return (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="font-ruda text-[14px] leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
               >
-                <Link
-                  href="/"
-                  onClick={onClose}
-                  className="cursor-pointer whitespace-nowrap leading-none"
-                  style={{ fontSize: 32 }}
-                >
-                  CLOSE
-                </Link>
-                <div className="flex items-center" style={{ gap: 10 }}>
-                  {SOCIALS.map((s) => {
-                    // MAIL and DISCORD both open the REACH US popup — the
-                    // message is then delivered server-side instead of
-                    // yanking the visitor into a separate mail/Web app.
-                    if (s.label === "MAIL" || s.label === "DISCORD") {
-                      return (
-                        <button
-                          key={s.label}
-                          type="button"
-                          onClick={() =>
-                            openContactModal(s.label === "MAIL" ? "mail" : "discord")
-                          }
-                          className="cursor-pointer border-none bg-transparent p-0 text-left font-ruda leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
-                          style={{ fontSize: 16, width: s.width }}
-                        >
-                          {s.label}
-                        </button>
-                      );
-                    }
-                    const opensInBrowsers = !s.href.startsWith("mailto:");
-                    return (
-                      <a
-                        key={s.label}
-                        href={s.href}
-                        {...(opensInBrowsers
-                          ? { target: "_blank", rel: "noreferrer noopener" }
-                          : {})}
-                        className="font-ruda leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
-                        style={{ fontSize: 16, width: s.width }}
-                      >
-                        {s.label}
-                      </a>
-                    );
-                  })}
-                </div>
-              </div>
-            </section>
+                {s.label}
+              </a>
+            );
+          })}
+        </div>
 
-            {/* All-work panel from `node 8066:571`. */}
-            <section
-              className="relative h-full shrink-0 bg-cream text-ink"
-              style={{ width: 1568 }}
-              aria-label="All work"
-            >
-              <h2
-                className="absolute whitespace-pre"
-                style={{ left: 135, top: 52, fontSize: 208.236, lineHeight: "208.236px" }}
-              >
-                ALL WORK (4)
-              </h2>
+        {/* All work */}
+        <div ref={mobileWorksRef} className="bg-cream px-6 py-12 text-ink">
+          <h2
+            className="font-semibold uppercase"
+            style={{ fontSize: "clamp(38px, 11vw, 60px)", lineHeight: 1 }}
+          >
+            ALL WORK (4)
+          </h2>
 
-              {CARDS.map((card, i) => {
-                // Every card opens its case study.
-                const studyKey = STUDY_FOR_CARD[i];
-                const clickable = studyKey !== undefined && onOpenStudy !== undefined;
-                const CardTag = clickable ? "button" : "div";
-                return (
+          <div className="mt-10 flex flex-col gap-12">
+            {CARDS.map((card, i) => {
+              const studyKey = STUDY_FOR_CARD[i];
+              const clickable = studyKey !== undefined && onOpenStudy !== undefined;
+              const CardTag = clickable ? "button" : "div";
+              return (
                 <CardTag
                   key={card.name}
                   {...(clickable
@@ -405,60 +365,266 @@ export function WorksMenu({
                         "aria-label": `Open ${card.name} case study`,
                       }
                     : {})}
-                  className={`absolute flex flex-col items-center${clickable ? " cursor-pointer text-left" : ""}`}
-                  style={{ left: card.left, top: card.top, width: 267.544, gap: 15 }}
+                  className={`w-full${clickable ? " cursor-pointer text-left" : ""}`}
                 >
-                  <div className="relative h-[250px] w-full shrink-0">
+                  <div className="photo-slot w-full" style={{ aspectRatio: `${card.width} / ${card.height}` }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={card.img}
                       alt={card.alt}
-                      className="absolute inset-0 max-w-none object-cover pointer-events-none size-full"
+                      className="size-full object-cover"
+                      loading="lazy"
                     />
                   </div>
-                  {/* Caption grid verbatim from the components
-                      (`node 8066:576 / 583 / 590 / 597`): single max-content
-                      cell shared by category, number and name, separated
-                      only by the design's own ml/mt offsets. */}
-                  <div className="relative grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start shrink-0 whitespace-nowrap [word-break:break-word]">
-                    <p
-                      className="relative col-start-1 row-start-1 font-ruda font-normal leading-none text-black"
-                      style={{
-                        fontSize: 14,
-                        marginLeft: card.catMl,
-                        marginTop: 13,
-                      }}
-                    >
+                  <div className="mt-4 flex items-baseline gap-3">
+                    <span className="font-display leading-none" style={{ fontSize: 34 }}>
+                      {card.num}
+                    </span>
+                    <span className="font-ruda text-[20px] font-bold leading-none">
+                      {card.name}
+                    </span>
+                    <span className="ml-auto font-ruda text-[12px] leading-none text-ink/60">
                       {card.category}
-                    </p>
-                    <div className="relative col-start-1 row-start-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start">
-                      <p
-                        className="relative col-start-1 row-start-1 leading-none"
-                        style={{
-                          color: "#0e0e0a",
-                          fontSize: 64,
-                          marginLeft: 0,
-                          marginTop: 0,
-                        }}
-                      >
-                        {card.num}
-                      </p>
+                    </span>
+                  </div>
+                </CardTag>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Desktop ────────────────────────────────────────────────────── */}
+      <div className="hidden h-full md:block">
+        <div
+          ref={scrollerRef}
+          className="flex h-full w-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <div
+            className="relative shrink-0"
+            style={{ width: totalWidth * scale, height: FRAME_HEIGHT * scale }}
+          >
+            <div
+              className="absolute left-0 top-0 flex"
+              style={{
+                width: totalWidth,
+                height: FRAME_HEIGHT,
+                transform: scale === 1 ? undefined : `scale(${scale})`,
+                transformOrigin: "top left",
+              }}
+            >
+              {/* Menu panel from `node 8066:550`, stretched by menuFill so the
+                  night background covers the whole first screen. */}
+              <section
+                className="relative h-full shrink-0 bg-night text-cream"
+                style={{ width: MENU_PANEL_WIDTH + menuFill }}
+                aria-label="Menu"
+              >
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%)",
+                  }}
+                />
+
+                {/* Sidebar: cream 0.25px border on night (`node 8066:551`). */}
+                <div className="absolute left-0 top-0 h-full w-[115px] border-[0.25px] border-cream">
+                  {/* Menu-state glyph (`node 8066:557` "Vector"): a single 28px
+                      white dash where the hamburger was — closes the menu and
+                      returns to the landing page. */}
+                  <Link
+                    href="/"
+                    onClick={onClose}
+                    aria-label="Close menu and go to home page"
+                    className="absolute flex cursor-pointer items-center justify-center"
+                    style={{ left: 48.5, top: 18.5, width: 48, height: 48 }}
+                  >
+                    <svg width="29" height="1" viewBox="0 0 29 1" fill="none" aria-hidden="true">
+                      <path d="M28.5 0.5H0.5" stroke="white" strokeLinecap="round" />
+                    </svg>
+                  </Link>
+                  <div className="absolute left-0 top-[84px] h-px w-[115px] bg-cream" />
+
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                    <span className="vertical-rl-upright text-[32px] leading-8 tracking-[0.01em]">
+                      {COPY.name}
+                    </span>
+                  </div>
+                  <div className="pointer-events-none absolute bottom-[18px] left-0 flex w-full justify-center">
+                    <span className="vertical-rl-upright text-center text-[15px] leading-[15px]">
+                      {COPY.year}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Nav from `node 8066:558`. */}
+                <nav
+                  className="absolute flex flex-col items-start"
+                  style={{ left: 185, top: 44, gap: 29 }}
+                  aria-label="Site"
+                >
+                  <Link
+                    href="/"
+                    className="whitespace-nowrap leading-[1.185] text-[#565448] transition-colors duration-200 hover:text-cream"
+                    style={{ fontSize: NAV_FONT_SIZE }}
+                  >
+                    HOME
+                  </Link>
+                  <Link
+                    href="/about-me"
+                    onClick={onClose}
+                    className="cursor-pointer whitespace-nowrap leading-[1.185] text-[#565448] transition-colors duration-200 hover:text-cream"
+                    style={{ fontSize: NAV_FONT_SIZE }}
+                  >
+                    ABOUT
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={scrollToWorks}
+                    className="cursor-pointer whitespace-nowrap leading-[1.185] text-[#565448] transition-colors duration-200 hover:text-cream text-left"
+                    style={{ fontSize: NAV_FONT_SIZE }}
+                  >
+                    WORKS
+                  </button>
+                </nav>
+
+                {/* CLOSE + socials column from `node 8066:562`. */}
+                <div
+                  className="absolute flex flex-col items-end"
+                  style={{ left: 1043, top: 90, width: 441, gap: 544 }}
+                >
+                  <Link
+                    href="/"
+                    onClick={onClose}
+                    className="cursor-pointer whitespace-nowrap leading-none"
+                    style={{ fontSize: 32 }}
+                  >
+                    CLOSE
+                  </Link>
+                  <div className="flex items-center" style={{ gap: 10 }}>
+                    {SOCIALS.map((s) => {
+                      // MAIL and DISCORD both open the REACH US popup — the
+                      // message is then delivered server-side instead of
+                      // yanking the visitor into a separate mail/Web app.
+                      if (s.label === "MAIL" || s.label === "DISCORD") {
+                        return (
+                          <button
+                            key={s.label}
+                            type="button"
+                            onClick={() =>
+                              openContactModal(s.label === "MAIL" ? "mail" : "discord")
+                            }
+                            className="cursor-pointer border-none bg-transparent p-0 text-left font-ruda leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
+                            style={{ fontSize: 16, width: s.width }}
+                          >
+                            {s.label}
+                          </button>
+                        );
+                      }
+                      const opensInBrowsers = !s.href.startsWith("mailto:");
+                      return (
+                        <a
+                          key={s.label}
+                          href={s.href}
+                          {...(opensInBrowsers
+                            ? { target: "_blank", rel: "noreferrer noopener" }
+                            : {})}
+                          className="font-ruda leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
+                          style={{ fontSize: 16, width: s.width }}
+                        >
+                          {s.label}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              </section>
+
+              {/* All-work panel from `node 8066:571`. */}
+              <section
+                className="relative h-full shrink-0 bg-cream text-ink"
+                style={{ width: 1568 }}
+                aria-label="All work"
+              >
+                <h2
+                  className="absolute whitespace-pre"
+                  style={{ left: 135, top: 52, fontSize: 208.236, lineHeight: "208.236px" }}
+                >
+                  ALL WORK (4)
+                </h2>
+
+                {CARDS.map((card, i) => {
+                  // Every card opens its case study.
+                  const studyKey = STUDY_FOR_CARD[i];
+                  const clickable = studyKey !== undefined && onOpenStudy !== undefined;
+                  const CardTag = clickable ? "button" : "div";
+                  return (
+                  <CardTag
+                    key={card.name}
+                    {...(clickable
+                      ? {
+                          type: "button" as const,
+                          onClick: () => onOpenStudy(studyKey as StudyKey),
+                          "aria-label": `Open ${card.name} case study`,
+                        }
+                      : {})}
+                    className={`absolute flex flex-col items-center${clickable ? " cursor-pointer text-left" : ""}`}
+                    style={{ left: card.left, top: card.top, width: 267.544, gap: 15 }}
+                  >
+                    <div className="relative h-[250px] w-full shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={card.img}
+                        alt={card.alt}
+                        className="absolute inset-0 max-w-none object-cover pointer-events-none size-full"
+                      />
+                    </div>
+                    {/* Caption grid verbatim from the components
+                        (`node 8066:576 / 583 / 590 / 597`): single max-content
+                        cell shared by category, number and name, separated
+                        only by the design's own ml/mt offsets. */}
+                    <div className="relative grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start shrink-0 whitespace-nowrap [word-break:break-word]">
                       <p
                         className="relative col-start-1 row-start-1 font-ruda font-normal leading-none text-black"
                         style={{
-                          fontSize: 24,
-                          marginLeft: card.nameMl,
-                          marginTop: 36,
+                          fontSize: 14,
+                          marginLeft: card.catMl,
+                          marginTop: 13,
                         }}
                       >
-                        {card.name}
+                        {card.category}
                       </p>
+                      <div className="relative col-start-1 row-start-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start">
+                        <p
+                          className="relative col-start-1 row-start-1 leading-none"
+                          style={{
+                            color: "#0e0e0a",
+                            fontSize: 64,
+                            marginLeft: 0,
+                            marginTop: 0,
+                          }}
+                        >
+                          {card.num}
+                        </p>
+                        <p
+                          className="relative col-start-1 row-start-1 font-ruda font-normal leading-none text-black"
+                          style={{
+                            fontSize: 24,
+                            marginLeft: card.nameMl,
+                            marginTop: 36,
+                          }}
+                        >
+                          {card.name}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </CardTag>
-                );
-              })}
-            </section>
+                  </CardTag>
+                  );
+                })}
+              </section>
+            </div>
           </div>
         </div>
       </div>

@@ -131,3 +131,17 @@ body {
     animation: none !important;
   }
 }
+
+/* Touch polish for the mobile (vertical) layouts below 768px: suppress the
+   grey tap flash on buttons/links, and clip accidental horizontal overflow
+   so stray desktop chrome never creates sideways scrolling. `overflow-x:
+   clip` (unlike hidden) does not create a scroll container, so sticky bars
+   keep working. */
+@media (max-width: 767.98px) {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    overflow-x: clip;
+  }
+}
