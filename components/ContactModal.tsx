@@ -10,12 +10,22 @@ import {
 } from "react";
 import { CONTACT } from "@/lib/contact";
 
-/** Which entry point opened the popup: "discord" drops the reply email field. */
-type ContactChannel = "discord" | "mail";
+/**
+ * "GET IN TOUCH" modal, rebuilt pixel-for-pixel from the reference frame
+ * (`public/Reference photos/contact.png`). On desktop the modal reproduces
+ * the WHOLE reference artboard — sand page, "PRATIVA DAHAL" / "contact"
+ * header row, and the black-bordered card at its measured position — scaled
+ * down and centered as a floating popup over a dimmed page. The artboard
+ * (3688x2216) acts as the cqw container, so the composition is an exact
+ * proportional scale of the reference at any size. The card itself is a
+ * nested cqw container, so every card measurement keeps its original
+ * card-relative value. Delivery is email-only via `/api/contact` (Resend),
+ * with a `mailto:` handoff if the relay is unreachable.
+ */
 
 type ContactModalContextValue = {
   isOpen: boolean;
-  openContactModal: (channel?: ContactChannel) => void;
+  openContactModal: () => void;
   closeContactModal: () => void;
 };
 
@@ -31,12 +41,8 @@ export function useContactModal() {
 
 export function ContactModalProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [channel, setChannel] = useState<ContactChannel>("mail");
 
-  const openContactModal = useCallback((next: ContactChannel = "mail") => {
-    setChannel(next);
-    setIsOpen(true);
-  }, []);
+  const openContactModal = useCallback(() => setIsOpen(true), []);
   const closeContactModal = useCallback(() => setIsOpen(false), []);
 
   return (
@@ -44,7 +50,7 @@ export function ContactModalProvider({ children }: { children: ReactNode }) {
       value={{ isOpen, openContactModal, closeContactModal }}
     >
       {children}
-      <ContactModal open={isOpen} onClose={closeContactModal} channel={channel} />
+      <ContactModal open={isOpen} onClose={closeContactModal} />
     </ContactModalContext.Provider>
   );
 }
@@ -64,25 +70,6 @@ function CloseIcon() {
     >
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
     </svg>
   );
 }
@@ -108,17 +95,13 @@ function CheckIcon() {
 export function ContactModal({
   open,
   onClose,
-  channel,
 }: {
   open: boolean;
   onClose: () => void;
-  channel: ContactChannel;
 }) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [consent, setConsent] = useState(true);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "mailto" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -149,26 +132,20 @@ export function ContactModal({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!consent) return;
 
     setStatus("submitting");
     setErrorMessage("");
 
-    const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
-    // "mail" entries ask for a reply address; "discord" entries keep just a
-    // name + note, so the `/api/contact` embed omits the Email field.
-    const payload: { name: string; message: string; email?: string } = {
-      name: fullName || "Portfolio Visitor",
+    const payload = {
+      name: name.trim() || "Portfolio Visitor",
+      email: email.trim(),
       message: message.trim(),
     };
-    if (channel === "mail") {
-      payload.email = email.trim();
-    }
 
     try {
-      // Dispatched by the server-side handler in app/api/contact — Discord
-      // for note-only entries, Resend email for reply-address entries. The
-      // secrets never reach the browser bundle.
+      // Delivered by the server-side handler in app/api/contact — the
+      // visitor's address rides on Reply-To, so answering is a plain reply.
+      // The Resend key never reaches the browser bundle.
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
@@ -188,12 +165,12 @@ export function ContactModal({
     } catch {
       // Graceful fallback to mailto if the relay is unreachable
       try {
-        const subject = `Portfolio message from ${fullName || "a visitor"}`;
+        const subject = `Portfolio message from ${payload.name}`;
         const body = [
-          `Name: ${fullName}`,
-          ...(email.trim() ? [`Email: ${email.trim()}`] : []),
+          `Name: ${payload.name}`,
+          `Email: ${payload.email}`,
           "",
-          message.trim(),
+          payload.message,
         ].join("\n");
 
         window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(
@@ -208,8 +185,7 @@ export function ContactModal({
   };
 
   const handleReset = () => {
-    setFirstName("");
-    setLastName("");
+    setName("");
     setEmail("");
     setMessage("");
     setStatus("idle");
@@ -221,202 +197,310 @@ export function ContactModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="contact-modal-title"
-      className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 md:p-8"
+      aria-label="Get in touch"
+      className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 md:p-0"
     >
-      {/* Blurred luxury backdrop */}
+      {/* Desktop backdrop: the page behind, dimmed like a popup overlay */}
+      <div onClick={onClose} className="fixed inset-0 hidden bg-black/80 backdrop-blur-md md:block" />
+      {/* Mobile backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-300"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-300 md:hidden"
       />
 
-      {/* Modal Card */}
+      {/* ── Desktop: the whole reference artboard, floating as a popup ──────
+          The 3688x2216 frame is scaled to ~72% of the contain-fit size
+          (capped at 1100px) and centered: sand page, the header row, then
+          the card at its measured position (margins 284/284/244/246).
+          Clicking the dimmed page or anything outside the card closes the
+          modal. */}
       <div
-        className="relative z-10 w-full max-w-3xl overflow-hidden rounded-2xl border border-[#d8d0bd]/20 bg-[#11120D] p-7 sm:p-9 md:p-11 text-[#d8d0bd] shadow-2xl transition-all"
+        onClick={onClose}
+        className="relative z-10 hidden bg-sand md:block"
         style={{
-          boxShadow:
-            "0 30px 70px -15px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+          width: "min(72vw, 119.827vh, 1100px)",
+          aspectRatio: "3688 / 2216",
+          containerType: "inline-size",
         }}
       >
-        {/* Header row: REACH US heading + close button */}
-        <div className="flex items-center justify-between pb-6 sm:pb-8">
-          {/* Display serif at the body's inherited light weight — same heading
-              treatment as the rest of the site instead of heavy bold Ruda. */}
-          <h2
-            id="contact-modal-title"
-            className="font-display text-[26px] uppercase tracking-[0.08em] text-[#fffaf4] sm:text-[30px] md:text-[34px]"
-          >
-            REACH US
-          </h2>
+        {/* Header row, ink-calibrated against the reference (Roboto
+            Condensed 400). Offsets place the rendered ink, not the CSS box. */}
+        <span
+          className="absolute whitespace-nowrap font-condensed text-black"
+          style={{ left: "7.7394cqw", top: "3.9548cqw", fontSize: "1.2148cqw", lineHeight: 1, letterSpacing: "-0.0226cqw" }}
+        >
+          PRATIVA DAHAL
+        </span>
+        <span
+          className="absolute whitespace-nowrap font-condensed text-black"
+          style={{ left: "87.9926cqw", top: "3.9011cqw", fontSize: "1.295cqw", lineHeight: 1, letterSpacing: "0.0632cqw" }}
+        >
+          contact
+        </span>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close dialog"
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[#d8d0bd]/70 transition-colors hover:bg-white/10 hover:text-[#fffaf4]"
-          >
-            <CloseIcon />
-          </button>
-        </div>
-
-        {status === "success" || status === "mailto" ? (
-          <div className="flex flex-col items-center justify-center py-10 text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-400">
-              <CheckIcon />
-            </div>
-            {status === "success" ? (
-              <>
-                <h3 className="font-display text-[32px] tracking-wide text-[#fffaf4]">
-                  Message Dispatched
-                </h3>
-                <p className="mt-2 max-w-sm font-ruda text-[13px] leading-relaxed text-[#b8b3a8]">
-                  {channel === "mail" ? (
-                    <>
-                      Thank you for reaching out. Your message has landed
-                      directly in Prativa&apos;s inbox — she&apos;ll reply to
-                      you at {email.trim()}.
-                    </>
-                  ) : (
-                    <>
-                      Thank you for getting in touch. Your message has been
-                      delivered straight to Prativa&apos;s Discord.
-                    </>
-                  )}
-                </p>
-              </>
-            ) : (
-              <>
-                <h3 className="font-display text-[32px] tracking-wide text-[#fffaf4]">
-                  Almost Done
-                </h3>
-                <p className="mt-2 max-w-sm font-ruda text-[13px] leading-relaxed text-[#b8b3a8]">
-                  The delivery service couldn&apos;t be reached, so your email app has been opened with your details pre-filled. Just hit send to reach Prativa ({CONTACT.email}).
-                </p>
-              </>
-            )}
-            <button
-              type="button"
-              onClick={handleReset}
-              className="mt-6 cursor-pointer rounded-full border border-[#d8d0bd] px-7 py-2 font-ruda text-[13px] font-medium tracking-wide text-[#d8d0bd] transition-colors hover:bg-[#d8d0bd] hover:text-[#11120D]"
+        {/* The card at its measured artboard position. It is its own cqw
+            container, so every internal value keeps its card-relative
+            meaning from the pixel calibration. */}
+        <div
+          className="absolute"
+          onClick={(e) => e.stopPropagation()}
+          style={{ left: "7.7017cqw", top: "6.6161cqw", width: "84.5987cqw", containerType: "inline-size" }}
+        >
+          <div className="relative aspect-[3120/1726] overflow-hidden rounded-[1.06cqw] border-[0.705cqw] border-black bg-sand">
+            <h2
+              id="contact-modal-title"
+              className="absolute left-[-2.741cqw] top-[3.28cqw] m-0 whitespace-nowrap font-display font-bold text-black"
+              style={{ fontSize: "14.904cqw", lineHeight: 1, letterSpacing: "0em" }}
             >
-              Close
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
-              {/* Left Column: First Name, Last Name, Email, Consent */}
-              <div className="flex flex-col justify-between gap-5">
-                <div className="flex flex-col gap-5">
-                  <div>
-                    <label htmlFor="contact-first-name" className="sr-only">
-                      First Name
-                    </label>
-                    <input
-                      id="contact-first-name"
-                      type="text"
-                      required
-                      placeholder="First Name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full border-b border-[#d8d0bd]/25 bg-transparent py-2.5 font-ruda text-[15px] text-[#fffaf4] placeholder-[#878787] transition-colors focus:border-[#d8d0bd] focus:outline-none"
-                    />
-                  </div>
+              GET IN TOUCH
+            </h2>
 
-                  <div>
-                    <label htmlFor="contact-last-name" className="sr-only">
-                      Last Name
-                    </label>
-                    <input
-                      id="contact-last-name"
-                      type="text"
-                      placeholder="Last Name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="w-full border-b border-[#d8d0bd]/25 bg-transparent py-2.5 font-ruda text-[15px] text-[#fffaf4] placeholder-[#878787] transition-colors focus:border-[#d8d0bd] focus:outline-none"
-                    />
-                  </div>
-
-                  {/* Email is asked only on "mail" entries — the Discord
-                      mode stays a name + note, with no reply field. */}
-                  {channel === "mail" && (
-                    <div>
-                      <label htmlFor="contact-email" className="sr-only">
-                        Email
-                      </label>
-                      <input
-                        id="contact-email"
-                        type="email"
-                        required
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full border-b border-[#d8d0bd]/25 bg-transparent py-2.5 font-ruda text-[15px] text-[#fffaf4] placeholder-[#878787] transition-colors focus:border-[#d8d0bd] focus:outline-none"
-                      />
-                    </div>
-                  )}
+            {status === "success" || status === "mailto" ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center px-[10cqw] text-center">
+                <div className="mb-[2.2cqw] flex h-[5.5cqw] w-[5.5cqw] items-center justify-center rounded-full border-[0.2cqw] border-ink/40 bg-ink/5 text-ink">
+                  <CheckIcon />
                 </div>
-
-                {channel === "mail" && (
-                  <label className="group flex cursor-pointer items-start gap-3 pt-2 select-none">
-                    <input
-                      type="checkbox"
-                      checked={consent}
-                      onChange={(e) => setConsent(e.target.checked)}
-                      required
-                      className="mt-0.5 h-4 w-4 cursor-pointer rounded border-[#d8d0bd]/40 bg-transparent text-[#d8d0bd] accent-[#d8d0bd] focus:ring-0 focus:ring-offset-0"
-                    />
-                    <span className="font-ruda text-[11px] leading-[16px] text-[#878787] transition-colors group-hover:text-[#d8d0bd]/80">
-                      I give permission to contact me at this email address.
-                    </span>
-                  </label>
+                {status === "success" ? (
+                  <>
+                    <h3
+                      className="m-0 font-display font-bold text-black"
+                      style={{ fontSize: "4.6cqw", lineHeight: 1.15 }}
+                    >
+                      Message Dispatched
+                    </h3>
+                    <p
+                      className="mx-auto mt-[1cqw] max-w-[52cqw] font-ruda text-[#565448]"
+                      style={{ fontSize: "1.6cqw", lineHeight: 1.6 }}
+                    >
+                      Thank you for reaching out. Your message has landed directly
+                      in Prativa&apos;s inbox — she&apos;ll reply to you at{" "}
+                      {email.trim()}.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h3
+                      className="m-0 font-display font-bold text-black"
+                      style={{ fontSize: "4.6cqw", lineHeight: 1.15 }}
+                    >
+                      Almost Done
+                    </h3>
+                    <p
+                      className="mx-auto mt-[1cqw] max-w-[52cqw] font-ruda text-[#565448]"
+                      style={{ fontSize: "1.6cqw", lineHeight: 1.6 }}
+                    >
+                      The delivery service couldn&apos;t be reached, so your email
+                      app has been opened with your details pre-filled. Just hit
+                      send to reach Prativa ({CONTACT.email}).
+                    </p>
+                  </>
                 )}
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="mt-[2.6cqw] cursor-pointer rounded-full border-[0.14cqw] border-ink px-[3.4cqw] py-[1cqw] font-ruda text-[1.6cqw] font-medium text-ink transition-colors hover:bg-ink hover:text-sand"
+                >
+                  Close
+                </button>
               </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <label htmlFor="contact-name" className="sr-only">
+                  Name
+                </label>
+                <input
+                  id="contact-name"
+                  type="text"
+                  required
+                  placeholder="Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="absolute left-[3.14cqw] top-[22.07cqw] w-[32.2cqw] rounded-none border-0 border-b-[0.385cqw] border-[#A49C9C] bg-transparent px-0 pb-[0.451cqw] pt-0 font-display text-black outline-none placeholder:text-black placeholder:opacity-100"
+                  style={{ fontSize: "2.1cqw", lineHeight: 1 }}
+                />
 
-              {/* Right Column: Message & Send Row */}
-              <div className="flex flex-col justify-between gap-6">
-                <div className="flex flex-1 flex-col">
-                  <label htmlFor="contact-message" className="sr-only">
-                    Type your message here
-                  </label>
-                  <textarea
-                    id="contact-message"
-                    required
-                    rows={6}
-                    placeholder="Type your message here"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="w-full flex-1 min-h-[140px] resize-none border-b border-[#d8d0bd]/25 bg-transparent py-2.5 font-ruda text-[15px] leading-relaxed text-[#fffaf4] placeholder-[#878787] transition-colors focus:border-[#d8d0bd] focus:outline-none"
-                  />
-                </div>
+                <label htmlFor="contact-email" className="sr-only">
+                  Mail
+                </label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  required
+                  placeholder="Mail"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="absolute left-[3.14cqw] top-[29.44cqw] w-[32.2cqw] rounded-none border-0 border-b-[0.385cqw] border-[#A49C9C] bg-transparent px-0 pb-[0.451cqw] pt-0 font-display text-black outline-none placeholder:text-black placeholder:opacity-100"
+                  style={{ fontSize: "2.1cqw", lineHeight: 1 }}
+                />
+
+                <label htmlFor="contact-message" className="sr-only">
+                  Type your message here
+                </label>
+                <textarea
+                  id="contact-message"
+                  required
+                  placeholder="Type your message here"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="absolute left-[49.3cqw] top-[22.03cqw] h-[18.295cqw] w-[41.1cqw] resize-none rounded-none border-0 border-b-[0.385cqw] border-[#A49C9C] bg-transparent px-0 pb-[0.5cqw] pl-0 pt-[0.232cqw] font-display text-black outline-none placeholder:text-black placeholder:opacity-100"
+                  style={{ fontSize: "2.1cqw", lineHeight: 1.2 }}
+                />
 
                 {errorMessage && (
-                  <p className="font-ruda text-[12px] text-rose-400">
+                  <p
+                    className="absolute left-[49.3cqw] top-[41.4cqw] m-0 font-ruda text-rose-700"
+                    style={{ fontSize: "1.5cqw" }}
+                  >
                     {errorMessage}
                   </p>
                 )}
 
-                <div className="flex items-center justify-between gap-4 pt-2">
-                  <p className="max-w-[190px] font-ruda text-[10px] leading-tight text-[#878787]">
-                    {channel === "mail"
-                      ? "Sends straight to Prativa's email inbox."
-                      : "Delivers directly to Prativa's Discord."}
-                  </p>
+                <button
+                  type="submit"
+                  disabled={status === "submitting"}
+                  className="absolute left-[73.97cqw] top-[45.86cqw] flex h-[5.06cqw] w-[16.54cqw] cursor-pointer items-center justify-center rounded-[0.58cqw] border-0 bg-ink font-display font-semibold text-cream transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{ fontSize: "2.55cqw", lineHeight: 1 }}
+                >
+                  {status === "submitting" ? "Sending…" : "Send"}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
 
-                  <button
-                    type="submit"
-                    disabled={status === "submitting" || !consent}
-                    className="group flex cursor-pointer items-center gap-2.5 rounded-full border border-[#d8d0bd] px-7 py-2.5 font-ruda text-[13px] font-medium tracking-wide text-[#d8d0bd] transition-all duration-200 hover:bg-[#d8d0bd] hover:text-[#11120D] disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    <span>{status === "submitting" ? "Sending..." : "Send"}</span>
-                    <span className="transition-transform duration-200 group-hover:translate-x-1">
-                      <ArrowRightIcon />
-                    </span>
-                  </button>
-                </div>
+      {/* ── Mobile: same styling, stacked for touch ──────────────────────── */}
+      <div
+        className="relative z-10 w-[min(560px,92vw)] md:hidden"
+        style={{ containerType: "inline-size" }}
+      >
+        <div className="overflow-hidden rounded-[4cqw] border-[1.4cqw] border-black bg-sand px-[7cqw] pb-[8cqw] pt-[8cqw]">
+          <div className="flex items-start justify-between">
+            <h2
+              id="contact-modal-title-mobile"
+              className="m-0 font-display font-bold text-black"
+              style={{ fontSize: "10.5cqw", lineHeight: 1 }}
+            >
+              GET IN TOUCH
+            </h2>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close dialog"
+              className="-me-[1cqw] -ms-[1cqw] flex size-[9cqw] cursor-pointer items-center justify-center text-black/60 transition-colors hover:text-black"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+
+          {status === "success" || status === "mailto" ? (
+            <div className="flex flex-col items-center pt-[9cqw] text-center">
+              <div className="mb-[4cqw] flex h-[11cqw] w-[11cqw] items-center justify-center rounded-full border-[0.4cqw] border-ink/40 bg-ink/5 text-ink">
+                <CheckIcon />
               </div>
+              {status === "success" ? (
+                <>
+                  <h3
+                    className="m-0 font-display font-bold text-black"
+                    style={{ fontSize: "7cqw", lineHeight: 1.15 }}
+                  >
+                    Message Dispatched
+                  </h3>
+                  <p
+                    className="mx-auto mt-[2.5cqw] max-w-[80cqw] font-ruda text-[#565448]"
+                    style={{ fontSize: "3.6cqw", lineHeight: 1.6 }}
+                  >
+                    Thank you for reaching out. Your message has landed directly
+                    in Prativa&apos;s inbox — she&apos;ll reply to you at{" "}
+                    {email.trim()}.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3
+                    className="m-0 font-display font-bold text-black"
+                    style={{ fontSize: "7cqw", lineHeight: 1.15 }}
+                  >
+                    Almost Done
+                  </h3>
+                  <p
+                    className="mx-auto mt-[2.5cqw] max-w-[80cqw] font-ruda text-[#565448]"
+                    style={{ fontSize: "3.6cqw", lineHeight: 1.6 }}
+                  >
+                    The delivery service couldn&apos;t be reached, so your email
+                    app has been opened with your details pre-filled. Just hit
+                    send to reach Prativa ({CONTACT.email}).
+                  </p>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={handleReset}
+                className="mt-[6cqw] cursor-pointer rounded-full border-[0.35cqw] border-ink px-[8cqw] py-[2.4cqw] font-ruda text-[3.6cqw] font-medium text-ink transition-colors hover:bg-ink hover:text-sand"
+              >
+                Close
+              </button>
             </div>
-          </form>
-        )}
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col pt-[9cqw]">
+              <label htmlFor="contact-name-mobile" className="sr-only">
+                Name
+              </label>
+              <input
+                id="contact-name-mobile"
+                type="text"
+                required
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="block w-full rounded-none border-0 border-b-[0.9cqw] border-[#A49C9C] bg-transparent px-0 pb-[2.4cqw] pt-0 font-display text-black outline-none placeholder:text-black placeholder:opacity-100"
+                style={{ fontSize: "4.8cqw", lineHeight: 1 }}
+              />
+
+              <label htmlFor="contact-email-mobile" className="sr-only">
+                Mail
+              </label>
+              <input
+                id="contact-email-mobile"
+                type="email"
+                required
+                placeholder="Mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-[8.5cqw] block w-full rounded-none border-0 border-b-[0.9cqw] border-[#A49C9C] bg-transparent px-0 pb-[2.4cqw] pt-0 font-display text-black outline-none placeholder:text-black placeholder:opacity-100"
+                style={{ fontSize: "4.8cqw", lineHeight: 1 }}
+              />
+
+              <label htmlFor="contact-message-mobile" className="sr-only">
+                Type your message here
+              </label>
+              <textarea
+                id="contact-message-mobile"
+                required
+                placeholder="Type your message here"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="mt-[8.5cqw] block h-[36cqw] w-full resize-none rounded-none border-0 border-b-[0.9cqw] border-[#A49C9C] bg-transparent px-0 pb-[3cqw] pt-0 font-display text-black outline-none placeholder:text-black placeholder:opacity-100"
+                style={{ fontSize: "4.8cqw", lineHeight: 1.4 }}
+              />
+
+              {errorMessage && (
+                <p className="m-0 mt-[3cqw] font-ruda text-[3.4cqw] text-rose-700">
+                  {errorMessage}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={status === "submitting"}
+                className="mt-[7cqw] flex h-[13.5cqw] w-[46cqw] cursor-pointer items-center justify-center self-end rounded-[2.6cqw] border-0 bg-ink font-display font-semibold text-cream transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                style={{ fontSize: "4.8cqw", lineHeight: 1 }}
+              >
+                {status === "submitting" ? "Sending…" : "Send"}
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

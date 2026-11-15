@@ -117,7 +117,6 @@ const SOCIALS = [
   { label: "LINKEDIN", href: "https://www.linkedin.com/in/prativadahal01", width: 77 },
   { label: "BEHANCE", href: "https://www.behance.net/prativadahal01", width: 84 },
   { label: "MAIL", href: `mailto:${CONTACT.email}`, width: 42 },
-  { label: "DISCORD", href: CONTACT.discord.url, width: 72 },
 ] as const;
 
 export function WorksMenu({
@@ -315,12 +314,12 @@ export function WorksMenu({
         {/* Socials */}
         <div className="flex flex-wrap gap-x-4 gap-y-3 px-6 pb-12 pt-8">
           {SOCIALS.map((s) => {
-            if (s.label === "MAIL" || s.label === "DISCORD") {
+            if (s.label === "MAIL") {
               return (
                 <button
                   key={s.label}
                   type="button"
-                  onClick={() => openContactModal(s.label === "MAIL" ? "mail" : "discord")}
+                  onClick={() => openContactModal()}
                   className="cursor-pointer border-none bg-transparent p-0 text-left font-ruda text-[14px] leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
                 >
                   {s.label}
@@ -505,17 +504,15 @@ export function WorksMenu({
                   </Link>
                   <div className="flex items-center" style={{ gap: 10 }}>
                     {SOCIALS.map((s) => {
-                      // MAIL and DISCORD both open the REACH US popup — the
-                      // message is then delivered server-side instead of
-                      // yanking the visitor into a separate mail/Web app.
-                      if (s.label === "MAIL" || s.label === "DISCORD") {
+                      // MAIL opens the REACH US popup — the message is then
+                      // delivered by email server-side instead of yanking the
+                      // visitor into a separate mail/Web app.
+                      if (s.label === "MAIL") {
                         return (
                           <button
                             key={s.label}
                             type="button"
-                            onClick={() =>
-                              openContactModal(s.label === "MAIL" ? "mail" : "discord")
-                            }
+                            onClick={() => openContactModal()}
                             className="cursor-pointer border-none bg-transparent p-0 text-left font-ruda leading-none text-[#E8E1D3] underline [text-underline-position:from-font]"
                             style={{ fontSize: 16, width: s.width }}
                           >

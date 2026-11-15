@@ -65,7 +65,7 @@ export const FAQS = [
   },
   {
     q: "Is Prativa Dahal available for freelance or remote design work?",
-    a: "Prativa works remotely with clients worldwide — startups, product teams and founders — from her base in Kathmandu, Nepal, and is open to on-site and hybrid opportunities in Nepal and internationally. For new projects, collaborations or enquiries, use the contact options on this site — email or Discord links are listed on the homepage and on the about page.",
+    a: "Prativa works remotely with clients worldwide — startups, product teams and founders — from her base in Kathmandu, Nepal, and is open to on-site and hybrid opportunities in Nepal and internationally. For new projects, collaborations or enquiries, use the contact options on this site — email and social links are listed on the homepage and on the about page.",
   },
   {
     q: "Which case studies are featured in this portfolio?",

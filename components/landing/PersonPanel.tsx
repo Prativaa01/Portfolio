@@ -52,8 +52,9 @@ export function PersonPanel() {
         </span>
       </div>
 
-      {/* Placeholder sits behind and slightly larger than the photo, matching
-          the two stacked rectangles in node 8066:481 / 8066:482. */}
+      {/* Placeholder sits behind and larger than the photo, matching the two
+          stacked rectangles in node 8066:481 / 8066:482. Enlarged on request
+          to a tall 440x616 backdrop — the photo itself is unchanged. */}
       <div
         className="absolute bg-slot"
         style={{

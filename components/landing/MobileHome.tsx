@@ -269,7 +269,7 @@ export function MobileHome() {
         <div className="flex flex-wrap gap-x-5 gap-y-4">
           {SOCIALS.map((label, i) => {
             const href = SOCIAL_HREFS[i];
-            const opensPopup = label === "MAIL" || label === "DISCORD";
+            const opensPopup = label === "MAIL";
             const shared =
               "flex flex-col gap-1 font-ruda text-[15px] leading-none text-[#E8E1D3]";
 
@@ -285,7 +285,7 @@ export function MobileHome() {
                 <button
                   key={label}
                   type="button"
-                  onClick={() => openContactModal(label === "MAIL" ? "mail" : "discord")}
+                  onClick={() => openContactModal()}
                   className={`cursor-pointer border-none bg-transparent p-0 text-left ${shared}`}
                 >
                   {labelNode}

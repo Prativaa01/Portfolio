@@ -30,13 +30,19 @@ export const HOME = {
 
   /**
    * Read from the live Figma file (`node 8066:475`). Note the portrait is two
-   * stacked layers: a `#d9d9d9` placeholder (357x412) sitting 10px lower and
-   * 38px wider than the photo that covers it (319x422, `object-bottom`).
+   * stacked layers: a `#d9d9d9` placeholder behind the photo that covers it
+   * (319x422, `object-bottom`).
+   *
+   * The Figma placeholder was 357x412; it is enlarged here on request to a
+   * tall 440x616 backdrop — widened to 440 (centred on the photo, ~60px grey
+   * peek each side) and stretched from just below the heading (top 150) down
+   * to 4px above the panel edge. The photo keeps its exact Figma position
+   * and size — only the grey box grows.
    */
   person: {
     heading: { left: 41, fontSize: 48, boxTop: 72 },
     link: { left: 478, fontSize: 32, boxTop: 632, gap: 15, arrowSize: 30 },
-    placeholder: { left: 777, top: 310, width: 357, height: 412 },
+    placeholder: { left: 716, top: 150, width: 440, height: 616 },
     photo: { left: 777, top: 300, width: 319, height: 422 },
   },
 
@@ -158,7 +164,6 @@ export const SOCIALS = [
   "LINKEDIN",
   "BEHANCE",
   "MAIL",
-  "DISCORD",
 ] as const;
 
 export const SOCIAL_HREFS = [
@@ -166,7 +171,6 @@ export const SOCIAL_HREFS = [
   "https://www.linkedin.com/in/prativadahal01",
   "https://www.behance.net/prativadahal01",
   `mailto:${CONTACT.email}`,
-  CONTACT.discord.url,
 ] as const;
 
 export const EXPERTISE = [

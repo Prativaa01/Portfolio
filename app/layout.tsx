@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Outfit, Ruda } from "next/font/google";
+import { Cormorant_Garamond, Outfit, Roboto_Condensed, Ruda } from "next/font/google";
 import { StudyProvider } from "@/components/StudyContext";
 import { ContactModalProvider } from "@/components/ContactModal";
 import {
@@ -31,6 +31,15 @@ const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+/* The contact artboard's header row (PRATIVA DAHAL / contact) — identified
+   from the reference PNG by per-glyph ink comparison. */
+const condensed = Roboto_Condensed({
+  variable: "--font-condensed",
+  subsets: ["latin"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -82,7 +91,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${display.variable} ${ruda.variable} ${outfit.variable} h-full antialiased`}>
+    <html lang="en" className={`${display.variable} ${ruda.variable} ${outfit.variable} ${condensed.variable} h-full antialiased`}>
       <head>
         <link rel="alternate" type="text/markdown" href="/llms.txt" title="LLM-friendly summary" />
         <script

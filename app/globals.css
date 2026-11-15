@@ -46,6 +46,10 @@ body {
   font-family: var(--font-outfit), sans-serif;
 }
 
+.font-condensed {
+  font-family: var(--font-condensed), sans-serif;
+}
+
 /* Rotated -90deg text: renders bottom-to-top like the Figma frame. */
 .vertical-rl-upright {
   writing-mode: vertical-rl;

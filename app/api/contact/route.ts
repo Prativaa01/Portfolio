@@ -1,17 +1,13 @@
 /**
- * Contact form → Discord / email relay.
+ * Contact form → email relay.
  *
  * The browser posts the inquiry here; this server-side handler is the only
- * place that knows the secrets (`.env.local` in dev, Vercel environment
- * variables in production). They stay off the client on purpose: anyone
- * holding the webhook URL could post into the target channel, and anyone
+ * place that knows the secret (`.env.local` in dev, Vercel environment
+ * variables in production). It stays off the client on purpose: anyone
  * holding the Resend key could send mail as the verified sender.
  *
- * Two delivery lanes, chosen by whether the visitor left a reply address:
- *  - "discord" entries (no email): one embed into the #general webhook,
- *    mention-pings suppressed so a form post can never ping the channel.
- *  - "mail" entries (email): sent by Resend to the site owner's inbox, with
- *    the visitor's address on Reply-To — answering is a plain reply.
+ * Every entry is delivered by Resend to the site owner's inbox, with the
+ * visitor's address on Reply-To — answering is a plain reply.
  *
  * On any failure the route reports it so the modal falls back to its mailto
  * handoff.
@@ -19,7 +15,6 @@
 
 import { CONTACT } from "@/lib/contact";
 
-const EMBED_COLOR = 0xd8d0bd; // Site cream, to match the portfolio palette.
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
 export async function POST(request: Request) {
@@ -38,7 +33,7 @@ export async function POST(request: Request) {
     typeof value === "string" ? value.trim() : "";
 
   const name = asText(data.name) || "Portfolio Visitor";
-  const email = asText(data.email); // Optional — "discord" entries send none.
+  const email = asText(data.email); // Required — every delivery is by mail.
   const message = asText(data.message);
 
   if (!message) {
@@ -48,17 +43,21 @@ export async function POST(request: Request) {
     );
   }
 
-  if (email && !email.includes("@")) {
+  if (!email) {
+    return Response.json(
+      { success: false, message: "An email address is required." },
+      { status: 400 },
+    );
+  }
+
+  if (!email.includes("@")) {
     return Response.json(
       { success: false, message: "That email address doesn't look valid." },
       { status: 400 },
     );
   }
 
-  if (email) {
-    return await sendViaResend(name, email, message);
-  }
-  return await relayToDiscord(name, message);
+  return await sendViaResend(name, email, message);
 }
 
 /**
@@ -114,60 +113,6 @@ async function sendViaResend(
   } catch {
     return Response.json(
       { success: false, message: "Could not reach the email service." },
-      { status: 502 },
-    );
-  }
-
-  return Response.json({ success: true });
-}
-
-/**
- * Discord lane: note-only entries embed into #general. Visitors control the
- * message body, so every mention (@everyone, @here, roles, users) is
- * suppressed — a form post can never ping the whole channel.
- */
-async function relayToDiscord(
-  name: string,
-  message: string,
-): Promise<Response> {
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-  if (!webhookUrl) {
-    return Response.json(
-      { success: false, message: "Delivery inbox is not configured yet." },
-      { status: 503 },
-    );
-  }
-
-  const payload = {
-    username: "Portfolio Inquiries",
-    allowed_mentions: { parse: [] },
-    embeds: [
-      {
-        title: "New portfolio inquiry",
-        color: EMBED_COLOR,
-        description: message.slice(0, 4000),
-        fields: [{ name: "Name", value: name.slice(0, 256), inline: true }],
-        timestamp: new Date().toISOString(),
-      },
-    ],
-  };
-
-  try {
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      return Response.json(
-        { success: false, message: `Discord delivery failed (${response.status}).` },
-        { status: 502 },
-      );
-    }
-  } catch {
-    return Response.json(
-      { success: false, message: "Could not reach Discord." },
       { status: 502 },
     );
   }
