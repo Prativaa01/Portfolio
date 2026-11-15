@@ -256,7 +256,7 @@ export function ContactModal({
             </h2>
 
             {status === "success" || status === "mailto" ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center px-[10cqw] text-center">
+              <div className="absolute inset-x-0 top-[17.5cqw] bottom-0 flex flex-col items-center justify-center px-[10cqw] text-center">
                 <div className="mb-[2.2cqw] flex h-[5.5cqw] w-[5.5cqw] items-center justify-center rounded-full border-[0.2cqw] border-ink/40 bg-ink/5 text-ink">
                   <CheckIcon />
                 </div>
