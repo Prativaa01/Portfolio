@@ -27,7 +27,12 @@ export default function Page() {
   return (
     <>
       <LandingPage />
-      <FaqSection headingId="faq-heading" />
+      {/* Desktop shows the FAQ as a horizontal panel inside the frame
+          (FaqPanel, right after the socials panel). This vertical copy stays
+          only for the mobile stacked layout. */}
+      <div className="md:hidden">
+        <FaqSection headingId="faq-heading" />
+      </div>
     </>
   );
 }

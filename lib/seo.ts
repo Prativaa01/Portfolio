@@ -57,6 +57,10 @@ export const KNOWS_ABOUT = [
   "AI-assisted Design and Prototyping",
 ] as const;
 
+/** Intro paragraph shown above the visible FAQ — shared by both layouts. */
+export const FAQ_INTRO =
+  "Prativa Dahal is a product designer in Kathmandu, Nepal who designs apps, websites and design systems with clear structure, motion and user-centred flows — for teams across Nepal, the US, Europe and Asia. Below are the most common questions about her work, case studies and how to get in touch.";
+
 /** Visible on the page AND emitted as FAQPage JSON-LD — the two must match. */
 export const FAQS = [
   {

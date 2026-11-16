@@ -9,7 +9,9 @@ import { CONTACT } from "./contact";
  */
 
 export const HOME = {
-  frameWidth: 9916,
+  // Sum of PANEL_WIDTHS: the six original Figma panels (9916) plus the 1566px
+  // FAQ panel appended after the socials panel.
+  frameWidth: 11482,
   frameHeight: 770,
 
   /**
@@ -150,7 +152,11 @@ export const HOME = {
   },
 } as const;
 
-export const PANEL_WIDTHS = [1566, 1566, 1566, 1566, 2394, 1258] as const;
+export const PANEL_WIDTHS = [
+  1566, 1566, 1566, 1566, 2394, 1258,
+  // FAQ panel appended after the socials panel (design-frame addition).
+  1566,
+] as const;
 
 export const CASE_STUDIES = [
   "CAREMATE",

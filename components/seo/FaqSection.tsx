@@ -1,4 +1,4 @@
-import { FAQS, HOME_FAQ_JSON_LD } from "@/lib/seo";
+import { FAQS, FAQ_INTRO, HOME_FAQ_JSON_LD } from "@/lib/seo";
 
 /**
  * Answer-first introduction + visible FAQ.
@@ -22,11 +22,7 @@ export function FaqSection({ headingId }: { headingId: string }) {
           Frequently asked questions
         </h2>
         <p className="mt-4 font-ruda text-base leading-relaxed text-ink/80">
-          Prativa Dahal is a product designer in Kathmandu, Nepal who designs
-          apps, websites and design systems with clear structure, motion and
-          user-centred flows — for teams across Nepal, the US, Europe and
-          Asia. Below are the most common questions about her work, case
-          studies and how to get in touch.
+          {FAQ_INTRO}
         </p>
         <div className="mt-8 divide-y divide-ink/15 border-y border-ink/15">
           {FAQS.map((faq) => (
